@@ -1,7 +1,16 @@
-
-
 input[name="q"] {
     border-radius: 15px;
     font-size: 14px;
     margin: 0 auto;
+}
+
+.form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav {
+  display: flex;
+  text-align: right;
 }
