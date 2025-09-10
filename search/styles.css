@@ -1,6 +1,6 @@
 
 
-textarea {
+input[name="q"] {
     border-radius: 15px;
     font-size: 14px;
     margin: 0 auto;
