@@ -9,12 +9,13 @@ input[name="q"] {
 .form {
   display: flex;
   align-items: center;
+  justify-content: center;  /* this centers the form on the page */
   font-size: 24px;
 }
 
 form {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* this centers the elements in the form on each line */
     align-items: center;
     gap: 10px;
 }
