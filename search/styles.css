@@ -8,8 +8,10 @@ input[name="q"] {
 
 .form {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  gap: 10px;               
+  justify-content: center;  /* is this still needed if I use align-items with flex direction? */
   font-size: 24px;
 }
 
