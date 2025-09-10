@@ -16,13 +16,17 @@ input[name="q"] {
   text-align: right;
 }
 
-nav ul {
+.nav ul {
   list-style: none;
-  display: inline-block;
+  /*display: inline-block; blocked out and moved to li*/
   gap: 20px;
 }
 
-nav a {
+.nav li {
+    display: inline-block;
+}
+
+.nav a {
   text-decoration: none;
   color: #333;
 }
