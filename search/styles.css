@@ -1,6 +1,6 @@
 input[name="q"] {
     border-radius: 10px;
-    font-size: 24px;
+    
     margin: 0 auto;
 }
 
@@ -8,6 +8,7 @@ input[name="q"] {
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 24px;
 }
 
 .nav {
@@ -25,6 +26,7 @@ input[name="q"] {
 
 .nav li {
     display: inline-block;
+    padding: 10px;
 }
 
 .nav a {
