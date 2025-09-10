@@ -1,6 +1,6 @@
 input[name="q"] {
-    border-radius: 15px;
-    font-size: 14px;
+    border-radius: 10px;
+    font-size: 24px;
     margin: 0 auto;
 }
 
@@ -14,6 +14,7 @@ input[name="q"] {
   display: flex;
   justify-content: flex-end; /* this made it go to the right */
   text-align: right;
+  font-size: 16px;
 }
 
 .nav ul {
@@ -28,5 +29,10 @@ input[name="q"] {
 
 .nav a {
   text-decoration: none;
+  color: #333;
+}
+
+.nav a:hover {
+  text-decoration: underline;
   color: #333;
 }
