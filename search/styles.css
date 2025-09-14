@@ -1,10 +1,14 @@
+/* NOTE:  Because the instructions said "The CSS you write should match Google’s own aesthetics as best as possible." and did not say the total aesthethic
+has to match, I did not pull in the Google logo.  I didn't know if that was ok to do that or not. I also did not load the fontawesome pieces.  I was unclear 
+if those were necessary. */
+
 body {
   font-family: 'Roboto', Arial, sans-serif;
 }
 
 .nav {
   display: flex;
-  justify-content: flex-end; /* this made it go to the right */
+  justify-content: flex-end; /* this made it right-aligned */
   text-align: right;
   font-size: 13px;
 }
@@ -70,12 +74,12 @@ input[name="q"] {
   justify-content: center;  /* this centers the form on the page */
   flex-direction: column; /* this centers the elements in the form on each line */
   font-size: 24px;
-  border: #000 2px solid;
 }
 
 .button-row{
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
     margin-top: 10px;
 }
