@@ -8,3 +8,10 @@ def index(request):
         "entries": util.list_entries()
     })
 
+## def entry(request, title):
+##    return render(request, "encyclopedia/layout.html/", {
+##        "title": title
+##    })
+
+def add(request):
+    return render(request, "encyclopedia/add.html")
