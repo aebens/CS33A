@@ -15,15 +15,20 @@ def index(request):
     })
 
 def entry(request, title):
-    return render(request, "encyclopedia/layout.html/", {
-        "entry": util.get_entry(title)
+    entry = util.get_entry(title)
+    # Get content only and remove entry filepath and file extension.
+    content = util.markdown_to_html(entry)
+    return render(request, "encyclopedia/entry.html/", {
+        "entry": entry,
+        "content": content,
+        "title": title
     })
 
 def add(request):
     entries = util.list_entries()
     if request.method == "POST":
         form = NewEntryForm(request.POST)
-        if form.is_valid(): ## Need to check if title already exists.
+        if form.is_valid(): ## TODO: Need to check if title already exists.
             entryTitle = form.cleaned_data["entryTitle"]
             entryContent = form.cleaned_data["entryContent"]
             util.save_entry(entryTitle, entryContent)
