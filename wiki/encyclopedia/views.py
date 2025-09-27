@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django import forms  ##document
-from django.http import HttpResponseRedirect  ##document
+from django.http import HttpResponseRedirect, Http404  ##document
 from django.urls import reverse  ##document
 
 from . import util
@@ -16,12 +16,15 @@ def index(request):
 
 def entry(request, title):
     entry = util.get_entry(title)
-    # Get content only and remove entry filepath and file extension.
-    content = util.markdown_to_html(entry)
-    return render(request, "encyclopedia/entry.html/", {
-        "entry": entry,
-        "content": content,
-        "title": title
+    if entry == None:
+        raise Http404
+    else:
+        # Get content only and remove entry filepath and file extension.
+        content = util.markdown_to_html(entry)
+        return render(request, "encyclopedia/entry.html/", {
+            "entry": entry,
+            "content": content,
+            "title": title
     })
 
 def add(request):

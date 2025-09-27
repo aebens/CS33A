@@ -3,8 +3,6 @@ import re
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 
-from django.http import HttpResponse ## document
-
 
 def list_entries():
     """
