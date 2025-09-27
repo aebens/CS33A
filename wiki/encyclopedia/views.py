@@ -7,7 +7,7 @@ from . import util
 
 class NewEntryForm(forms.Form):
     entryTitle = forms.CharField(label="Entry Title")
-    entryContent = forms.CharField(label="Entry Content")
+    entryContent = forms.CharField(widget=forms.Textarea, label="Entry Content")
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
