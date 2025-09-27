@@ -16,15 +16,11 @@ def index(request):
 
 def entry(request, title):
     entry = util.get_entry(title)
-    if entry == None:
-        raise Http404
-    else:
-        # Get content only and remove entry filepath and file extension.
-        content = util.markdown_to_html(entry)
-        return render(request, "encyclopedia/entry.html/", {
-            "entry": entry,
-            "content": content,
-            "title": title
+    content = util.markdown_to_html(entry) # Convert content to html to render in page.
+    return render(request, "encyclopedia/entry.html/", {
+        "entry": entry,
+        "content": content,
+        "title": title
     })
 
 def add(request):
