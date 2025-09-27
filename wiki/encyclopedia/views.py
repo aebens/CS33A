@@ -14,10 +14,9 @@ def index(request):
         "entries": util.list_entries()
     })
 
-def entry(request):
+def entry(request, title):
     return render(request, "encyclopedia/layout.html/", {
-        "title": title,
-        "content": content
+        "entry": util.get_entry(title)
     })
 
 def add(request):
@@ -28,7 +27,7 @@ def add(request):
             entryTitle = form.cleaned_data["entryTitle"]
             entryContent = form.cleaned_data["entryContent"]
             util.save_entry(entryTitle, entryContent)
-            return HttpResponseRedirect(reverse("index"))
+            return HttpResponseRedirect(reverse("entry", args=[entryTitle]))
         else:
             return render(request, "tasks/add.html", {
                 "form": form
