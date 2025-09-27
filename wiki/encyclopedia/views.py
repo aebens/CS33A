@@ -25,15 +25,22 @@ def entry(request, title):
 
 def add(request):
     entries = util.list_entries()
+    print(entries)
     if request.method == "POST":
         form = NewEntryForm(request.POST)
-        if form.is_valid(): ## TODO: Need to check if title already exists.
+        if form.is_valid(): 
             entryTitle = form.cleaned_data["entryTitle"]
             entryContent = form.cleaned_data["entryContent"]
-            util.save_entry(entryTitle, entryContent)
-            return HttpResponseRedirect(reverse("entry", args=[entryTitle]))
+            if entryTitle in entries:  ## Checks to see if title already exists and if so, renders an error in the page.
+                return render(request, "encyclopedia/add.html", {
+                "form": form,
+                "error": "An entry with this title already exists.  Please change the title to continue."
+            })
+            else:
+                util.save_entry(entryTitle, entryContent)
+                return HttpResponseRedirect(reverse("entry", args=[entryTitle]))
         else:
-            return render(request, "tasks/add.html", {
+            return render(request, "encyclopedia/add.html", {
                 "form": form
             })
     return render(request, "encyclopedia/add.html", {

@@ -10,6 +10,9 @@
     <form action="{% url 'add' %}" method="post">
         {% csrf_token %}
         {{ form }}
+        <br>
+        {{ error }}
+        <br>
         <input type="submit">
     </form>
 
