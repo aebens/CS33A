@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django import forms  ##document
 from django.http import HttpResponseRedirect  ##document
 from django.urls import reverse  ##document
+import random ##document
 
 from . import util
 
@@ -94,3 +95,20 @@ def search(request):
             "results": results,
             "error": notfound
         })
+
+def randomPage(request):
+    entries = util.list_entries()
+    if len(entries) == 0:
+        return render(request, "encyclopedia/index.html",{
+            "entries": util.list_entries()
+        })
+    elif len(entries) == 1: ## ensures that if there is only one page, it can't be random and will be selected.
+        return HttpResponseRedirect(reverse("entry", args=[entries[0]]))
+    else:
+        # This makes sure it will return a new page by getting the current title and ensuring the page will change.
+        current_title = request.GET.get('title')
+        while True:
+            entry = random.choice(entries)
+            if entry != current_title:
+                break
+        return HttpResponseRedirect(reverse("entry", args=[entry]))
