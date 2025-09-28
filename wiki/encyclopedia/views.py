@@ -91,9 +91,7 @@ def search(request):
             results.append(entry)
     if not results:
         notfound = "No results.  Please try a new search."
-    print(results[0].lower())
-    print(q)
-    
+
     if len(results) == 1 and q == results[0].lower(): 
         return HttpResponseRedirect(reverse("entry", args=[results[0]]))
     else:
@@ -104,7 +102,7 @@ def search(request):
 
 def randomPage(request):
     entries = util.list_entries()
-    if len(entries) == 0:
+    if len(entries) == 0:  ## ensures if there are no pages yet that the index will show.
         return render(request, "encyclopedia/index.html",{
             "entries": util.list_entries()
         })
