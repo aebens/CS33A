@@ -1,8 +1,8 @@
 from django.shortcuts import render
-from django import forms  ##document
-from django.http import HttpResponseRedirect  ##document
-from django.urls import reverse  ##document
-import random ##document
+from django import forms
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+import random
 
 from . import util
 
