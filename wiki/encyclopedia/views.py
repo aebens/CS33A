@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django import forms  ##document
-from django.http import HttpResponseRedirect, Http404  ##document
+from django.http import HttpResponseRedirect  ##document
 from django.urls import reverse  ##document
 
 from . import util
@@ -9,6 +9,7 @@ class NewEntryForm(forms.Form):
     entryTitle = forms.CharField(label="Entry Title")
     entryContent = forms.CharField(widget=forms.Textarea, label="Entry Content")
 
+## Edit form is separate for New Entry form in case I want these to be different in the future.
 class EditForm(forms.Form):
     entryTitle = forms.CharField(label="Entry Title")
     entryContent = forms.CharField(widget=forms.Textarea, label="Entry Content")
@@ -74,3 +75,11 @@ def add(request):
     return render(request, "encyclopedia/add.html", {
         "form": NewEntryForm()
     })
+
+def search(request):
+    q = request.GET.get('q').lower()
+    entries = util.list_entries_search()
+    if q in entries: 
+        return HttpResponseRedirect(reverse("entry", args=[q]))
+    else:
+        return render(request, "encyclopedia/index.html")
