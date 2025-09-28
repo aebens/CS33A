@@ -1,7 +1,13 @@
 # This is an H1
 
+
+
 ## This is an H2
+
+
 
 ### This is an H3
 
-This is __italics__ and this is **bold**.
+
+
+This is *italics* and this is **bold**.

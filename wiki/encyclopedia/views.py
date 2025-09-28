@@ -91,7 +91,10 @@ def search(request):
             results.append(entry)
     if not results:
         notfound = "No results.  Please try a new search."
-    if len(results) == 1: 
+    print(results[0].lower())
+    print(q)
+    
+    if len(results) == 1 and q == results[0].lower(): 
         return HttpResponseRedirect(reverse("entry", args=[results[0]]))
     else:
         return render(request, "encyclopedia/search.html",{
