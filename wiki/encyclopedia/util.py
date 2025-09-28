@@ -12,13 +12,6 @@ def list_entries():
     return list(sorted(re.sub(r"\.md$", "", filename)
                 for filename in filenames if filename.endswith(".md")))
 
-def list_entries_search():
-    """
-    Returns a list of all names of encyclopedia entries in lowercase.
-    """
-    _, filenames = default_storage.listdir("entries")
-    return list(sorted(re.sub(r"\.md$", "", filename).lower()
-                for filename in filenames if filename.endswith(".md")))
 
 def save_entry(title, content):
     """
@@ -52,9 +45,10 @@ def markdown_to_html(content):
     Multiline means it matches the pattern by line instead of whole page.  
     "\1" refers to first instance of the regex, whatever is captured in (.*$), and \2 refers to the seocond captured group.  \g<0> is a whole match.
 
+    Some help from the Duck (cs50.ai) to understand how to fix the paragraph problem (it was overzealous in making paragraphs), but requirements were set by me, including asking it to include the lookahead, but I didn't know about \g<0>.
     """
 
-    # Convert Heading tags
+    # Convert heading tags
     content = re.sub(r'^# (.*)$', r'\n<h1>\1</h1>', content, flags=re.MULTILINE) ## Finds one # and a space at the beginning of the line to make an h1.  
     content = re.sub(r'^## (.*)$', r'\n<h2>\1</h2>', content, flags=re.MULTILINE) ## Finds two # and a space at the beginning of the line to make an h2.
     content = re.sub(r'^### (.*)$', r'\n<h3>\1</h3>', content, flags=re.MULTILINE) ## Finds three # and a space at the beginning of the line to make an h3.
