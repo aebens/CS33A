@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django import forms
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
 import random
 
@@ -22,12 +22,15 @@ def index(request):
 
 def entry(request, title):
     entry = util.get_entry(title)
-    content = util.markdown_to_html(entry) # Convert content to html to render in page.
-    return render(request, "encyclopedia/entry.html/", {
-        "entry": entry,
-        "content": content,
-        "title": title
-    })
+    if entry is None:
+        raise Http404()
+    else:
+        content = util.markdown_to_html(entry) # Convert content to html to render in page.
+        return render(request, "encyclopedia/entry.html/", {
+            "entry": entry,
+            "content": content,
+            "title": title
+        })
 
 def edit(request, title):
     content = util.get_entry(title)
