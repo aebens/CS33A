@@ -77,9 +77,20 @@ def add(request):
     })
 
 def search(request):
+    notfound = None
     q = request.GET.get('q').lower()
-    entries = util.list_entries_search()
-    if q in entries: 
-        return HttpResponseRedirect(reverse("entry", args=[q]))
+    entries = util.list_entries()
+
+    results = []
+    for entry in entries:
+        if q in entry.lower():
+            results.append(entry)
+    if not results:
+        notfound = "No results.  Please try a new search."
+    if len(results) == 1: 
+        return HttpResponseRedirect(reverse("entry", args=[results[0]]))
     else:
-        return render(request, "encyclopedia/index.html")
+        return render(request, "encyclopedia/search.html",{
+            "results": results,
+            "error": notfound
+        })
