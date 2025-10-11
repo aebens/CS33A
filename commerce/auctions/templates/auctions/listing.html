@@ -1,0 +1,12 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>{{listing.title}}</h2>
+    <br>
+    <p>{{listing.description}}</p>
+    <img src = {{listing.image_url}}>
+    <br>
+    {{listing.category}}
+
+    <a href="{% url 'index' %}">All Listings</a>
+{% endblock %}
