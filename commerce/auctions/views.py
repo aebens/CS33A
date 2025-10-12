@@ -20,6 +20,11 @@ def index(request):
         "listings": Listing.objects.all()
     })
 
+def userlistings(request):
+    return render(request, "auctions/userlistings.html", {
+        "listings": Listing.objects.filter(User=request.user)
+    })
+
 def listing(request, id):
     listing = Listing.objects.get(id=id)
     return render(request, "auctions/listing.html", {
@@ -40,7 +45,8 @@ def add(request):
                 )
                 bid = Bid.objects.create(
                     price=form.cleaned_data["listingStartBid"],
-                    User=request.user
+                    User=request.user,
+                    Listing=listing
                 )
 
                 return HttpResponseRedirect(reverse("listing", args=[listing.id]))
