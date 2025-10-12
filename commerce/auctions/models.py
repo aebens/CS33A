@@ -1,6 +1,14 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+CATEGORY_CHOICES = [
+        ('Fashion', 'Fashion'),
+        ('Toys', 'Toys'),
+        ('Electronics', 'Electronics'),
+        ('Home', 'Home'),
+        ('Uncategorized','Uncategorized')
+    ]
+
 
 class User(AbstractUser):
     pass
@@ -26,13 +34,6 @@ class Listing(models.Model):
     title = models.CharField(max_length=128)
     description = models.CharField(max_length=512)
     url_image = models.URLField()
-    CATEGORY_CHOICES = [
-        ('Fashion', 'Fashion'),
-        ('Toys', 'Toys'),
-        ('Electronics', 'Electronics'),
-        ('Home', 'Home'),
-        ('Uncategorized','Uncategorized')
-    ]
     category = models.CharField(max_length=32, choices=CATEGORY_CHOICES, default='Uncategorized')
     Bids = models.ForeignKey(Bid, on_delete=models.CASCADE, related_name="bids", null=True, blank=True)
     Comments = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name="comments", null=True, blank=True)

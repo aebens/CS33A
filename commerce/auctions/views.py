@@ -3,9 +3,17 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django import forms ##document?
+from auctions.models import CATEGORY_CHOICES ## this is needed in order to get the choice list to show up.
 
 from .models import User, Listing, Bid, Comment
 
+class NewListingForm(forms.Form):
+    listingTitle = forms.CharField(label="Title")
+    listingDesc = forms.CharField(widget=forms.Textarea, label="Description")
+    listingImgUrl = forms.URLField(label="Image URL")
+    listingStartBid = forms.DecimalField(label="Starting Bid", max_digits=8, decimal_places=2) ## This should match the model.
+    listingCategory = forms.ChoiceField(choices=CATEGORY_CHOICES, label="Category")  ## This should match the model.
 
 def index(request):
     return render(request, "auctions/index.html", {
@@ -13,9 +21,36 @@ def index(request):
     })
 
 def listing(request, id):
-    listing = Listing.objects.get(id=id) #I'm not sure if this get function is done right
+    listing = Listing.objects.get(id=id)
     return render(request, "auctions/listing.html", {
         "listing": listing
+    })
+
+def add(request):
+    if request.method == "POST":
+        form = NewListingForm(request.POST)
+        if  request.user.is_authenticated: 
+            if form.is_valid():
+                listing = Listing.objects.create(
+                    title=form.cleaned_data["listingTitle"],
+                    description=form.cleaned_data["listingDesc"],
+                    url_image=form.cleaned_data["listingImgUrl"],
+                    category=form.cleaned_data["listingCategory"]
+                )
+                bid = Bid.objects.create(
+                    price=form.cleaned_data["listingStartBid"],
+                    User=request.user
+                )
+
+                return HttpResponseRedirect(reverse("listing", args=[listing.id]))
+            
+        else:
+            return render(request, "auctions/login.html")
+    else:
+        form = NewListingForm()
+
+    return render(request, "auctions/add.html", {
+            "form": form
     })
 
 
