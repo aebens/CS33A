@@ -24,18 +24,18 @@ class Bid(models.Model):
     price = models.DecimalField(max_digits=8, decimal_places=2) # Caps at 8 digits, which is 999,999.99
     datetime = models.DateTimeField(auto_now_add=True) # This tracks creation and not modification.  Bids should not be modifiable. 
     User = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bids", null=False)  # This should log the user making the bid.  TO DO: CHECK IF THIS IS WORKING.
+    Listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="listings", null=False, blank=True)
 
 class Comment(models.Model):
     comment = models.CharField(max_length=512)
     datetime = models.DateTimeField(auto_now_add=True)  # Comments will not be modifiable.
     User = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments", null=False)  # This should log the user making the comment. TO DO: CHECK IF THIS IS WORKING.
+    Listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="listings", null=False, blank=True)
 
 class Listing(models.Model):
     title = models.CharField(max_length=128)
     description = models.CharField(max_length=512)
     url_image = models.URLField()
     category = models.CharField(max_length=32, choices=CATEGORY_CHOICES, default='Uncategorized')
-    Bids = models.ForeignKey(Bid, on_delete=models.CASCADE, related_name="bids", null=True, blank=True)
-    Comments = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name="comments", null=True, blank=True)
-    Users = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings", null=True, blank=True)
+    User = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings", null=True, blank=True)
 

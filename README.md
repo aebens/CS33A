@@ -19,6 +19,6 @@ Complete the implementation of your auction site. You must fulfill the following
 If you include any additional Python packages when working on this project, including any that may even be mentioned in this specification, that are not part of the Python standard library, such packages must be documented in a requirements.txt file that you include at the root level of your submission. If you fail to note required packages, your teaching fellow will not be able to test your project, and your correctness score will be impacted, accordingly. If unsure as to how to properly format such a file, see the Pip documentation.
 
 AB NOTES:  
-- Do I have to differentiate between "active" and "closed listings? 
+- Do I have to differentiate between "active" and "closed" listings? 
 - Do I need to set some fields to required when an entry is created?  
 - When a user is adding a listing and not logged in, it pushes them to the login page, and then returns them to index instead of the add page.  Can we change this so it goes to login with an error message and then pushes them back to the add page once they are logged in?

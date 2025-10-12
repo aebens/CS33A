@@ -35,7 +35,8 @@ def add(request):
                     title=form.cleaned_data["listingTitle"],
                     description=form.cleaned_data["listingDesc"],
                     url_image=form.cleaned_data["listingImgUrl"],
-                    category=form.cleaned_data["listingCategory"]
+                    category=form.cleaned_data["listingCategory"],
+                    User=request.user
                 )
                 bid = Bid.objects.create(
                     price=form.cleaned_data["listingStartBid"],
