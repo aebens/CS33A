@@ -1,3 +1,169 @@
 body {
     padding: 10px;
 }
+
+/* This is how the listings will be displayed on the page */
+
+.listing-card {
+  width: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 1.5rem;
+  margin: 1rem auto;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+
+.listing-card img {
+  width: auto;
+  height: auto;
+  max-width: 300px;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  object-fit: cover;
+  display: block;
+}
+
+.listing-card .title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.listing-card .description {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.listing-card .price {
+  font-size: 1.1rem;
+  color: #1976d2;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+/* This applies to the listing page as well as the grid */
+
+.category {
+  display: inline-block;
+  padding: 0.3em 1em;
+  background: #e3e6f0;
+  color: #1976d2;
+  border-radius: 999px;
+  font-size: 0.95em;
+  font-weight: 500;
+  margin: 0.2em 0;
+  letter-spacing: 0.03em;
+}
+
+.error-message {
+  color: #d32f2f;
+  background: #fdecea;
+  border: 1px solid #f8bbbc;
+  padding: 0.75em 1em;
+  border-radius: 6px;
+  margin: 1em 0;
+  font-weight: bold;
+}
+
+/* This will place the cards in a grid, 5 wide on desktop, 2 wide on medium screens, and 1 wide on mobile */
+
+.listings-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+@media (max-width: 1400px) and (min-width: 1101px) {
+  .listings-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 1100px) and (min-width: 801px) {
+  .listings-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 800px) and (min-width: 501px) {
+  .listings-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .listings-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Listing Page */
+
+
+.spacer {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+
+/* Listing Page Styles */
+
+.listing-page-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.listing-details {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 2rem;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.details-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.listing-bids {
+  background: #f7f9fc;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  padding: 2rem;
+}
+
+.bid-history {
+  list-style: none;
+  padding: 0;
+
+}
+
+.bid-history li {
+  padding: 0.5em 0;
+  border-bottom: 1px solid #e3e6f0;
+  font-size: 1em;
+}

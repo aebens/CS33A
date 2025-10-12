@@ -5,8 +5,19 @@ from django.shortcuts import render
 from django.urls import reverse
 from django import forms ##document?
 from auctions.models import CATEGORY_CHOICES ## this is needed in order to get the choice list to show up.
+from django.db.models import Max
 
 from .models import User, Listing, Bid, Comment
+
+def currentprices(queryset):
+    for listing in queryset:  ## this wil find the current price for each listing
+        latest_bid = Bid.objects.filter(Listing=listing).order_by('-datetime').first()  ## sorts the db by the datetime field and returns the first entry
+        
+        if latest_bid: ## checks if there is a latest bid [jic there is an entry without a starter bid (which should be an error)]
+            listing.current_price = latest_bid.price 
+        else:
+            None ## there would be no initial bid set, so this is none.
+    return queryset
 
 class NewListingForm(forms.Form):
     listingTitle = forms.CharField(label="Title")
@@ -15,20 +26,76 @@ class NewListingForm(forms.Form):
     listingStartBid = forms.DecimalField(label="Starting Bid", max_digits=8, decimal_places=2) ## This should match the model.
     listingCategory = forms.ChoiceField(choices=CATEGORY_CHOICES, label="Category")  ## This should match the model.
 
+class NewBidForm(forms.Form):
+    listingNewBid = forms.DecimalField(label="Your Bid", max_digits=8, decimal_places=2) ## This should match the model.
+
 def index(request):
+    listings = currentprices(Listing.objects.all())
+
     return render(request, "auctions/index.html", {
-        "listings": Listing.objects.all()
+        "listings": listings,
+        "bids": Bid.objects.all()
     })
 
 def userlistings(request):
+    listings = currentprices(Listing.objects.filter(User=request.user))
+
     return render(request, "auctions/userlistings.html", {
-        "listings": Listing.objects.filter(User=request.user)
+        "listings": listings,
+        "bids": Bid.objects.all()
     })
 
 def listing(request, id):
-    listing = Listing.objects.get(id=id)
+    listing = Listing.objects.get(id=id) ## returns an array with one item
+    listing = currentprices([listing])[0]  ## gets the array value from the first slot after converting to a list
+    bids = Bid.objects.filter(Listing=listing).order_by('-datetime') ## passes bids for the bid history for this listing
+    form = NewBidForm()
     return render(request, "auctions/listing.html", {
-        "listing": listing
+        "listing": listing,
+        "bids": bids,
+        "form": form
+    })
+
+def bid(request, id):
+    listing = Listing.objects.get(id=id)
+    listing = currentprices([listing])[0]
+    if request.method == "POST":
+        form = NewBidForm(request.POST)
+        if form.is_valid():
+                bid_amount = form.cleaned_data["listingNewBid"]
+                current_price = listing.current_price if listing.current_price else 0
+                if bid_amount > current_price:
+                    Bid.objects.create(
+                        price=bid_amount,
+                        User=request.user,
+                        Listing=listing
+                    )
+                    return HttpResponseRedirect(reverse("listing", args=[listing.id]))
+                else:
+                    error = "Your bid must be greater than the current highest bid."
+                    bids = Bid.objects.filter(Listing=listing).order_by('-datetime') ## this will return the bid history even when there is an error.
+                    return render(request, "auctions/listing.html", {
+                        "form": form,
+                        "listing": listing,
+                        "error": error,
+                        "bids": bids
+                    })
+            
+        else:
+                    error = "Please enter a bid that is greater than the current highest bid but also less than $10,000,000.00."
+                    bids = Bid.objects.filter(Listing=listing).order_by('-datetime') ## this will return the bid history even when there is an error.
+                    return render(request, "auctions/listing.html", {
+                        "form": form,
+                        "listing": listing,
+                        "error": error,
+                        "bids": bids
+                    })
+    else:
+        form = NewBidForm()
+
+    return render(request, "auctions/listing.html", {
+            "form": form,
+            "listing": listing
     })
 
 def add(request):

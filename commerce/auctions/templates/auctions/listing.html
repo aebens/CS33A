@@ -1,12 +1,63 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
+{% load humanize %}  <!-- This allows the commas in the bids -->
 
 {% block body %}
-    <h2>{{listing.title}}</h2>
-    <br>
-    <p>{{listing.description}}</p>
-    <img src = {{listing.image_url}}>
-    <br>
-    {{listing.category}}
 
-    <a href="{% url 'index' %}">All Listings</a>
+<div class="listing-page-grid">
+  <div class="listing-details">
+    <div class="details-grid">
+        <img src="{{ listing.url_image }}" alt="Image of Listing" style="max-width:300px; width:100%; margin:1rem 0;">
+        <div class="details-info">
+            <h1>{{ listing.title }}</h1>
+            <div class="spacer">
+                <span class="category">{{ listing.category }}</span>
+            </div>
+            <p class="price">
+                {% if listing.current_price %}
+                    <strong>Current Highest Bid:</strong> ${{ listing.current_price|floatformat:2|intcomma }}
+                {% else %}
+                    <strong>No bids yet</strong>
+                {% endif %}
+            </p>
+            <p class="description">{{ listing.description }}</p>
+        </div>
+    </div>
+  </div>
+  
+  <div class="listing-bids">
+    <div class="spacer">
+        <h2>Place a Bid</h2>
+    </div>
+    
+    {% if error %}
+      <div class="error-message">{{ error }}</div>
+    {% endif %}
+
+    <form action="{% url 'bid' listing.id %}" method="post">
+      {% csrf_token %}
+      {{ form }}
+      <button type="submit">Place Bid</button>
+    </form>
+
+    <br>
+
+    <div class="spacer">
+        <h3>Bid History</h3>
+    </div>
+
+    <ul class="bid-history">
+      {% for bid in bids %}
+        <li>
+          ${{ bid.price|floatformat:2|intcomma }} by {{ bid.User.username }} on {{ bid.datetime|date:"M d, Y H:i" }}
+        </li>
+      {% empty %}
+        <li>No bids yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+</div>
+
+    <a href="{% url 'index' %}">Back to All Listings</a>
 {% endblock %}
