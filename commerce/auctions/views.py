@@ -3,42 +3,49 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django import forms ##document?
-from auctions.models import CATEGORY_CHOICES ## this is needed in order to get the choice list to show up.
-from django.db.models import Max
+from django import forms
+from auctions.models import CATEGORY_CHOICES
 
 from .models import User, Listing, Bid, Comment, Watchlist
 
+
+# This wil find the current price for each listing.  It sorts the db by the datetime field and returns the first entry.
 def currentprices(queryset):
-    for listing in queryset:  ## this wil find the current price for each listing
-        latest_bid = Bid.objects.filter(Listing=listing).order_by('-datetime').first()  ## sorts the db by the datetime field and returns the first entry
+    for listing in queryset:
+        latest_bid = Bid.objects.filter(Listing=listing).order_by('-datetime').first()
         
-        if latest_bid: ## checks if there is a latest bid [jic there is an entry without a starter bid (which should be an error)]
+        if latest_bid:
             listing.current_price = latest_bid.price 
         else:
-            None ## there would be no initial bid set, so this is none.
+            None
     return queryset
+
 
 def get_listing_winner(listing):
     if listing.status == "Closed":
-        winning_bid = Bid.objects.filter(Listing=listing).order_by('-price', '-datetime').first() ## in theory sorting by either should give the winner.
+        winning_bid = Bid.objects.filter(Listing=listing).order_by('-price', '-datetime').first()
         if winning_bid:
             return winning_bid.User
     return None
+
 
 class NewListingForm(forms.Form):
     listingTitle = forms.CharField(label="Title")
     listingDesc = forms.CharField(widget=forms.Textarea, label="Description")
     listingImgUrl = forms.URLField(label="Image URL")
-    listingStartBid = forms.DecimalField(label="Starting Bid", max_digits=8, decimal_places=2) ## This should match the model.
-    listingCategory = forms.ChoiceField(choices=CATEGORY_CHOICES, label="Category")  ## This should match the model.
+    listingStartBid = forms.DecimalField(label="Starting Bid", max_digits=8, decimal_places=2)
+    listingCategory = forms.ChoiceField(choices=CATEGORY_CHOICES, label="Category")
+
 
 class NewBidForm(forms.Form):
-    listingNewBid = forms.DecimalField(label="Your Bid", max_digits=8, decimal_places=2) ## This should match the model.
+    listingNewBid = forms.DecimalField(label="Your Bid", max_digits=8, decimal_places=2)
+
 
 class NewCommentForm(forms.Form):
     comment = forms.CharField(widget=forms.Textarea, label="Add Your Comment", max_length=500)
 
+
+# This is the default route and shows only active listings.
 def index(request):
     listings = currentprices(Listing.objects.filter(status="Active"))
 
@@ -47,6 +54,8 @@ def index(request):
         "bids": Bid.objects.all()
     })
 
+
+# This is the user's own listings, whether active or not.
 def userlistings(request):
     listings = currentprices(Listing.objects.filter(User=request.user))
 
@@ -55,15 +64,18 @@ def userlistings(request):
         "bids": Bid.objects.all()
     })
 
+
+# Provides basic functionality to the listing page by pulling in related table data and 
+# allowing the watchlist button to function.  Calculates the winner of the listing.
 def listing(request, id):
-    listing = Listing.objects.get(id=id) ## returns an array with one item
-    listing = currentprices([listing])[0]  ## gets the array value from the first slot after converting to a list
-    bids = Bid.objects.filter(Listing=listing).order_by('-datetime') ## passes bids for the bid history for this listing
+    listing = Listing.objects.get(id=id)
+    listing = currentprices([listing])[0]
+    bids = Bid.objects.filter(Listing=listing).order_by('-datetime')
     winner = get_listing_winner(listing)
     comments = Comment.objects.filter(Listing=listing).order_by('-datetime')
     comment_form = NewCommentForm()
     form = NewBidForm()
-    in_watchlist = False ## this is set to false until it's checked and updated
+    in_watchlist = False
     if request.user.is_authenticated:
         in_watchlist = Watchlist.objects.filter(User=request.user, Listing=listing).exists()
     return render(request, "auctions/listing.html", {
@@ -73,9 +85,11 @@ def listing(request, id):
         "comments": comments,
         "comment_form": comment_form,
         "form": form,
-        "in_watchlist": in_watchlist ## this will be used to toggle the button on or off
+        "in_watchlist": in_watchlist
     })
 
+
+#Calculates the bid history for the listing page and allows the user to make a bid.
 def bid(request, id):
     listing = Listing.objects.get(id=id)
     listing = currentprices([listing])[0]
@@ -93,7 +107,7 @@ def bid(request, id):
                     return HttpResponseRedirect(reverse("listing", args=[listing.id]))
                 else:
                     error = "Your bid must be greater than the current highest bid."
-                    bids = Bid.objects.filter(Listing=listing).order_by('-datetime') ## this will return the bid history even when there is an error.
+                    bids = Bid.objects.filter(Listing=listing).order_by('-datetime')
                     return render(request, "auctions/listing.html", {
                         "form": form,
                         "listing": listing,
@@ -103,7 +117,7 @@ def bid(request, id):
             
         else:
                     error = "Please enter a bid that is greater than the current highest bid but also less than $10,000,000.00."
-                    bids = Bid.objects.filter(Listing=listing).order_by('-datetime') ## this will return the bid history even when there is an error.
+                    bids = Bid.objects.filter(Listing=listing).order_by('-datetime')
                     return render(request, "auctions/listing.html", {
                         "form": form,
                         "listing": listing,
@@ -118,6 +132,7 @@ def bid(request, id):
             "listing": listing
     })
 
+# This view adds a listing and its intitial bid.
 def add(request):
     if request.method == "POST":
         form = NewListingForm(request.POST)
@@ -149,41 +164,51 @@ def add(request):
             "form": form
     })
 
+
+# Adds listing to watchlist via a conditionally appearing button on the listing page.
 def add_to_watchlist(request, id):
     if request.user.is_authenticated:
         listing = Listing.objects.get(id=id)
-        Watchlist.objects.get_or_create(User=request.user, Listing=listing)  ## using get or create lets it try to get it or will create it without an error.
+        Watchlist.objects.get_or_create(User=request.user, Listing=listing)
         return HttpResponseRedirect(reverse("listing", args=[id]))
     else:
         return render(request, "auctions/login.html", {
             "message": "You must be logged in to add items to your watchlist."
         })
 
+
+# Removes listing to watchlist via a conditionally appearing button on the listing page.
+# This queries first for the username and the listing id, then deletes the record.
 def remove_from_watchlist(request, id):
     if request.user.is_authenticated:
         listing = Listing.objects.get(id=id)
-        Watchlist.objects.filter(User=request.user, Listing=listing).delete()  ## this queries first for the username and the listing id, then deletes the record.
+        Watchlist.objects.filter(User=request.user, Listing=listing).delete()
         return HttpResponseRedirect(reverse("listing", args=[id]))
     else:
         return render(request, "auctions/login.html", {
             "message": "You must be logged in to remove items from your watchlist."
         })
 
+
+# This view allows the user to close the listing if they are the owner.
+# There is a bit of extra security for "unauthorized" attempts to close in case the 
+# button accidentally renders on the screen (e.g. stale page).
 def close_listing(request, id):
     if request.user.is_authenticated:
         listing = Listing.objects.get(id=id)
-        if request.user == listing.User:  ## only the owner can close the listing
+        if request.user == listing.User:
             listing.status = "Closed"
             listing.save()
             return HttpResponseRedirect(reverse("listing", args=[id]))
         else:
-            return HttpResponse("Unauthorized", status=403)  ## this is extra safety if the user is not the right user and still gets the button by a glitch.
+            return HttpResponse("Unauthorized", status=403)
     else:
         return render(request, "auctions/login.html", {
             "message": "You must be logged in to close a listing."
         })
     
 
+# Allows the user to add a comment.
 def add_comment(request, id):
     if request.method == "POST" and request.user.is_authenticated:
         form = NewCommentForm(request.POST)
@@ -198,22 +223,28 @@ def add_comment(request, id):
         return HttpResponseRedirect(reverse("listing", args=[id]))
     return HttpResponseRedirect(reverse("listing", args=[id]))
 
+
+# Allows the user to add an item to their watchlist when they are on the listing.
 def watchlist(request):
     if request.user.is_authenticated:
-        watched_listings = Listing.objects.filter(watched_by__User=request.user) ## the double underscore lets you filter relationships (akin to a sql join using the name of the relationship that I gave in the model, "watched_by")
-        watched_listings = currentprices(watched_listings) ## this is needed to render on the card
+        watched_listings = Listing.objects.filter(watched_by__User=request.user)
+        watched_listings = currentprices(watched_listings)
         return render(request, "auctions/watchlist.html", {
             "listings": watched_listings
         })
     else:
-        return redirect('login')  ## this shouldn't be an option generally, but in case there is a glitch and the button appears while not logged in
+        return redirect('login')
 
+
+# Provides a list of categories avaialable to browse.
 def categories(request):
-    categories = [choice[0] for choice in CATEGORY_CHOICES] ## The 0 gets the left side of the tuple for choices which is the side for querying.
+    categories = [choice[0] for choice in CATEGORY_CHOICES]
     return render(request, "auctions/categories.html", {
         "categories": categories
     })
 
+
+# Provides a page for a given category and will show all the active listings for that category.
 def category_listings(request, category):
     listings = currentprices(Listing.objects.filter(category=category, status="Active"))
     return render(request, "auctions/category_listings.html", {
@@ -221,6 +252,8 @@ def category_listings(request, category):
         "category": category
     })
 
+
+# Login screen
 def login_view(request):
     if request.method == "POST":
 
@@ -241,11 +274,13 @@ def login_view(request):
         return render(request, "auctions/login.html")
 
 
+#Logout screen
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index")) 
 
 
+#Register screen
 def register(request):
     if request.method == "POST":
         username = request.POST["username"]

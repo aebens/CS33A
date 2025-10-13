@@ -2,7 +2,7 @@ body {
     padding: 10px;
 }
 
-/* This is how the listings will be displayed on the page */
+/* Listing cards -- some help provided by CS50 Duck*/
 
 .listing-card {
   width: 100%;

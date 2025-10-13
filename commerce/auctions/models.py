@@ -33,15 +33,17 @@ class Listing(models.Model):
     status = models.CharField(max_length=32, choices=STATUS_CHOICES, default='Active')
     User = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings", null=True, blank=True)
 
+# Caps at 8 digits, which is 999,999.99.
+# Datetime tracks creation and not modification because bids and comments are not modifiable.
 class Bid(models.Model):
-    price = models.DecimalField(max_digits=8, decimal_places=2) # Caps at 8 digits, which is 999,999.99
-    datetime = models.DateTimeField(auto_now_add=True) # This tracks creation and not modification.  Bids should not be modifiable. 
+    price = models.DecimalField(max_digits=8, decimal_places=2)
+    datetime = models.DateTimeField(auto_now_add=True)
     User = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bids", null=False)
     Listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bid_listings", null=False, blank=True)
 
 class Comment(models.Model):
     comment = models.CharField(max_length=512)
-    datetime = models.DateTimeField(auto_now_add=True)  # Comments will not be modifiable.
+    datetime = models.DateTimeField(auto_now_add=True)
     User = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments", null=False)
     Listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comment_listings", null=False, blank=True)
 
