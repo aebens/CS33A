@@ -7,7 +7,7 @@ from django import forms ##document?
 from auctions.models import CATEGORY_CHOICES ## this is needed in order to get the choice list to show up.
 from django.db.models import Max
 
-from .models import User, Listing, Bid, Comment
+from .models import User, Listing, Bid, Comment, Watchlist
 
 def currentprices(queryset):
     for listing in queryset:  ## this wil find the current price for each listing
@@ -19,6 +19,13 @@ def currentprices(queryset):
             None ## there would be no initial bid set, so this is none.
     return queryset
 
+def get_listing_winner(listing):
+    if listing.status == "Closed":
+        winning_bid = Bid.objects.filter(Listing=listing).order_by('-price', '-datetime').first() ## in theory sorting by either should give the winner.
+        if winning_bid:
+            return winning_bid.User
+    return None
+
 class NewListingForm(forms.Form):
     listingTitle = forms.CharField(label="Title")
     listingDesc = forms.CharField(widget=forms.Textarea, label="Description")
@@ -29,8 +36,11 @@ class NewListingForm(forms.Form):
 class NewBidForm(forms.Form):
     listingNewBid = forms.DecimalField(label="Your Bid", max_digits=8, decimal_places=2) ## This should match the model.
 
+class NewCommentForm(forms.Form):
+    comment = forms.CharField(widget=forms.Textarea, label="Add Your Comment", max_length=500)
+
 def index(request):
-    listings = currentprices(Listing.objects.all())
+    listings = currentprices(Listing.objects.filter(status="Active"))
 
     return render(request, "auctions/index.html", {
         "listings": listings,
@@ -49,11 +59,21 @@ def listing(request, id):
     listing = Listing.objects.get(id=id) ## returns an array with one item
     listing = currentprices([listing])[0]  ## gets the array value from the first slot after converting to a list
     bids = Bid.objects.filter(Listing=listing).order_by('-datetime') ## passes bids for the bid history for this listing
+    winner = get_listing_winner(listing)
+    comments = Comment.objects.filter(Listing=listing).order_by('-datetime')
+    comment_form = NewCommentForm()
     form = NewBidForm()
+    in_watchlist = False ## this is set to false until it's checked and updated
+    if request.user.is_authenticated:
+        in_watchlist = Watchlist.objects.filter(User=request.user, Listing=listing).exists()
     return render(request, "auctions/listing.html", {
         "listing": listing,
         "bids": bids,
-        "form": form
+        "winner": winner,
+        "comments": comments,
+        "comment_form": comment_form,
+        "form": form,
+        "in_watchlist": in_watchlist ## this will be used to toggle the button on or off
     })
 
 def bid(request, id):
@@ -119,7 +139,9 @@ def add(request):
                 return HttpResponseRedirect(reverse("listing", args=[listing.id]))
             
         else:
-            return render(request, "auctions/login.html")
+            return render(request, "auctions/login.html", {
+            "message": "You must be logged in to create a listing."
+        })
     else:
         form = NewListingForm()
 
@@ -127,6 +149,54 @@ def add(request):
             "form": form
     })
 
+def add_to_watchlist(request, id):
+    if request.user.is_authenticated:
+        listing = Listing.objects.get(id=id)
+        Watchlist.objects.get_or_create(User=request.user, Listing=listing)  ## using get or create lets it try to get it or will create it without an error.
+        return HttpResponseRedirect(reverse("listing", args=[id]))
+    else:
+        return render(request, "auctions/login.html", {
+            "message": "You must be logged in to add items to your watchlist."
+        })
+
+def remove_from_watchlist(request, id):
+    if request.user.is_authenticated:
+        listing = Listing.objects.get(id=id)
+        Watchlist.objects.filter(User=request.user, Listing=listing).delete()  ## this queries first for the username and the listing id, then deletes the record.
+        return HttpResponseRedirect(reverse("listing", args=[id]))
+    else:
+        return render(request, "auctions/login.html", {
+            "message": "You must be logged in to remove items from your watchlist."
+        })
+
+def close_listing(request, id):
+    if request.user.is_authenticated:
+        listing = Listing.objects.get(id=id)
+        if request.user == listing.User:  ## only the owner can close the listing
+            listing.status = "Closed"
+            listing.save()
+            return HttpResponseRedirect(reverse("listing", args=[id]))
+        else:
+            return HttpResponse("Unauthorized", status=403)  ## this is extra safety if the user is not the right user and still gets the button by a glitch.
+    else:
+        return render(request, "auctions/login.html", {
+            "message": "You must be logged in to close a listing."
+        })
+    
+
+def add_comment(request, id):
+    if request.method == "POST" and request.user.is_authenticated:
+        form = NewCommentForm(request.POST)
+        listing = Listing.objects.get(id=id)
+        if form.is_valid():
+            Comment.objects.create(
+                Listing=listing,
+                User=request.user,
+                comment=form.cleaned_data["comment"]
+            )
+
+        return HttpResponseRedirect(reverse("listing", args=[id]))
+    return HttpResponseRedirect(reverse("listing", args=[id]))
 
 def login_view(request):
     if request.method == "POST":
@@ -150,7 +220,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse("index"))
+    return HttpResponseRedirect(reverse("index")) 
 
 
 def register(request):

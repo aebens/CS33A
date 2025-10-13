@@ -120,6 +120,53 @@ body {
   padding-bottom: 0.5em;
 }
 
+.watchlist {
+  color: #fff;
+  background: #1976d2;
+  padding: 0.4em 1em;
+  border-radius: 999px;
+  font-weight: bold;
+  cursor: pointer; /* Makes it look like a button */
+  margin-left: 1em;
+  text-decoration: none;
+}
+
+.watchlist:hover {
+  background: #145ea8;
+  color: #fff;
+}
+
+.close-listing {
+  color: #fff;
+  background: #d32f2f;
+  padding: 0.4em 1em;
+  border-radius: 999px;
+  font-weight: bold;
+  cursor: pointer;  /* Makes it look like a button */
+  margin-left: 1em;
+  text-decoration: none;
+}
+
+.close-listing:hover {
+  background: #a82323;
+  color: #fff;
+}
+
+.winner-label {
+  display: block;
+  width: 100%;
+  background: #e3e6f0;
+  color: #1976d2;
+  padding: 1em 0.5em;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-top: 1em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  letter-spacing: 0.03em;
+  text-align: center;
+}
+
 /* Listing Page Styles */
 
 .listing-page-grid {
@@ -166,4 +213,47 @@ body {
   padding: 0.5em 0;
   border-bottom: 1px solid #e3e6f0;
   font-size: 1em;
+}
+
+/* Comments */
+
+.comments-section {
+  margin-top: 2em;
+  padding: 1.5em;
+  background: #f7f9fc; /* sets off the section at the bottom of the page */
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.comment-list {
+  list-style: none; /* removes the bullet */
+  padding: 0;
+}
+
+.comment-list li {
+  margin-bottom: 1em;
+  border-bottom: 1px solid #e3e6f0; /* places a nice border between comments */
+  padding-bottom: 0.5em;
+}
+
+.comments-section textarea {
+  width: 100%;
+  max-width: 600px;
+  min-width: 300px;
+  height: 3em;
+  min-height: 2em;
+  font-size: 1em;
+  padding: 0.75em;
+  border-radius: 6px;
+  border: 1px solid #e3e6f0;
+  resize: vertical;
+  box-sizing: border-box;
+  margin-bottom: 1em;
+}
+
+.comments-section label {
+  display: block; /* places the label above the text area instead of inline */
+  margin-bottom: 0.3em;
+  vertical-align: top; /* places the label above the text area */
+  font-weight: 500;
 }

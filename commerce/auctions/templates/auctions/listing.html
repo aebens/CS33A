@@ -4,6 +4,19 @@
 
 {% block body %}
 
+<div>
+    {% if user.is_authenticated %}
+        {% if in_watchlist %}
+            <a href="{% url 'remove_from_watchlist' listing.id %}" class="watchlist">Remove from Watchlist</a>
+        {% else %}
+            <a href="{% url 'add_to_watchlist' listing.id %}" class="watchlist">Add to Watchlist</a> 
+        {% endif %}
+        {% if user == listing.User and listing.status == "Active" %}
+            <a href="{% url 'close_listing' listing.id %}"  class="close-listing">Close Listing</a>
+        {% endif %}
+    {% endif %}
+</div>
+
 <div class="listing-page-grid">
   <div class="listing-details">
     <div class="details-grid">
@@ -26,19 +39,29 @@
   </div>
   
   <div class="listing-bids">
-    <div class="spacer">
-        <h2>Place a Bid</h2>
-    </div>
-    
-    {% if error %}
-      <div class="error-message">{{ error }}</div>
-    {% endif %}
 
-    <form action="{% url 'bid' listing.id %}" method="post">
-      {% csrf_token %}
-      {{ form }}
-      <button type="submit">Place Bid</button>
-    </form>
+    {% if listing.status == "Closed" %}
+        <div class="closed-message">
+            <strong>This listing is closed. No further bids are accepted.</strong>
+            <div class="winner-label">
+                Winner: {{ winner.username }}
+            </div>
+        </div>
+    {% else %}
+        <div class="spacer">
+            <h2>Place a Bid</h2>
+        </div>
+        
+        {% if error %}
+        <div class="error-message">{{ error }}</div>
+        {% endif %}
+
+        <form action="{% url 'bid' listing.id %}" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">Place Bid</button>
+        </form>
+    {% endif %}
 
     <br>
 
@@ -57,6 +80,34 @@
     </ul>
   </div>
 
+</div>
+
+<div class="comments-section">
+    <div class="spacer">
+        <h2>Comments</h2>
+    </div>
+    {% if user.is_authenticated %}
+        <form action="{% url 'add_comment' listing.id %}" method="post">
+            {% csrf_token %}
+            {{ comment_form }}
+            <button type="submit">Add Comment</button>
+        </form>
+    {% else %}
+        <p><a href="{% url 'login' %}">Log in</a> to add a comment.</p>
+    {% endif %}
+    
+    <hr>
+    
+    <ul class="comment-list">
+        {% for comment in comments %}
+            <li>
+                <strong>{{ comment.User.username }}</strong> on {{ comment.datetime|date:"M d, Y H:i" }}:<br>
+                {{ comment.comment }}
+            </li>
+        {% empty %}
+            <li>No comments yet.</li>
+        {% endfor %}
+    </ul>
 </div>
 
     <a href="{% url 'index' %}">Back to All Listings</a>

@@ -9,6 +9,11 @@ CATEGORY_CHOICES = [
         ('Uncategorized','Uncategorized')
     ]
 
+STATUS_CHOICES = [
+        ('Active', 'Active'),
+        ('Closed', 'Closed')
+    ]
+
 
 class User(AbstractUser):
     pass
@@ -25,6 +30,7 @@ class Listing(models.Model):
     description = models.CharField(max_length=512)
     url_image = models.URLField()
     category = models.CharField(max_length=32, choices=CATEGORY_CHOICES, default='Uncategorized')
+    status = models.CharField(max_length=32, choices=STATUS_CHOICES, default='Active')
     User = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings", null=True, blank=True)
 
 class Bid(models.Model):
@@ -39,5 +45,9 @@ class Comment(models.Model):
     User = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments", null=False)
     Listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comment_listings", null=False, blank=True)
 
-
+class Watchlist(models.Model):
+    datetime = models.DateTimeField(auto_now_add=True)
+    User = models.ForeignKey(User, on_delete=models.CASCADE, related_name="watchlists")
+    Listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="watched_by")
+    
 
