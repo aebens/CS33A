@@ -28,7 +28,7 @@ class Item(models.Model):
 class Listing(models.Model):
     title = models.CharField(max_length=128)
     description = models.CharField(max_length=512)
-    url_image = models.URLField()
+    url_image = models.URLField(null=True, blank=True)
     category = models.CharField(max_length=32, choices=CATEGORY_CHOICES, default='Uncategorized')
     status = models.CharField(max_length=32, choices=STATUS_CHOICES, default='Active')
     User = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings", null=True, blank=True)

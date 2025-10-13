@@ -198,6 +198,29 @@ def add_comment(request, id):
         return HttpResponseRedirect(reverse("listing", args=[id]))
     return HttpResponseRedirect(reverse("listing", args=[id]))
 
+def watchlist(request):
+    if request.user.is_authenticated:
+        watched_listings = Listing.objects.filter(watched_by__User=request.user) ## the double underscore lets you filter relationships (akin to a sql join using the name of the relationship that I gave in the model, "watched_by")
+        watched_listings = currentprices(watched_listings) ## this is needed to render on the card
+        return render(request, "auctions/watchlist.html", {
+            "listings": watched_listings
+        })
+    else:
+        return redirect('login')  ## this shouldn't be an option generally, but in case there is a glitch and the button appears while not logged in
+
+def categories(request):
+    categories = [choice[0] for choice in CATEGORY_CHOICES] ## The 0 gets the left side of the tuple for choices which is the side for querying.
+    return render(request, "auctions/categories.html", {
+        "categories": categories
+    })
+
+def category_listings(request, category):
+    listings = currentprices(Listing.objects.filter(category=category, status="Active"))
+    return render(request, "auctions/category_listings.html", {
+        "listings": listings,
+        "category": category
+    })
+
 def login_view(request):
     if request.method == "POST":
 

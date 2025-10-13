@@ -3,9 +3,9 @@
 {% load humanize %}  <!-- This allows the commas in the bids -->
 
 {% block body %}
-    <h2>My Listings</h2>
+    <h2>{{category}}</h2>
 
-    {% if listing %}
+    {% if listings %}
         <div class = "listings-grid">
             {% for listing in listings %}
                 <a href="{% url 'listing' listing.id %}" class="card-link">
@@ -27,7 +27,8 @@
         </div>
 
     {% else %}
-        You have no items listed.
+        There are no active listings in this category.
     {% endif %}
+
     
 {% endblock %}

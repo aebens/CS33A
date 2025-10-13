@@ -5,25 +5,30 @@
 {% block body %}
     <h2>Active Listings</h2>
 
-    <div class = "listings-grid">
-        {% for listing in listings %}
-            <a href="{% url 'listing' listing.id %}" class="card-link">
-                <div class = "listing-card">
-                    <h2 class ="title"> {{ listing.title }} </h2>
-                    <span class="price">
-                        {% if listing.current_price %}
-                            ${{ listing.current_price|floatformat:2|intcomma }}
-                        {% else %}
-                            No bids yet
-                        {% endif %}
-                    </span>
-                    <p class = "description"> {{ listing.description}} </p>
-                    <img src = "{{ listing.url_image }}" alt="Image of Listing">
-                    <span class="category">{{listing.category}}</span>
-                </div>
-            </a>
-        {% endfor %}
-    </div>
+    {% if listing %}
+        <div class = "listings-grid">
+            {% for listing in listings %}
+                <a href="{% url 'listing' listing.id %}" class="card-link">
+                    <div class = "listing-card">
+                        <h2 class ="title"> {{ listing.title }} </h2>
+                        <span class="price">
+                            {% if listing.current_price %}
+                                ${{ listing.current_price|floatformat:2|intcomma }}
+                            {% else %}
+                                No bids yet
+                            {% endif %}
+                        </span>
+                        <p class = "description"> {{ listing.description}} </p>
+                        <img src = "{{ listing.url_image }}" alt="Image of Listing">
+                        <span class="category">{{listing.category}}</span>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        No items are available.
+    {% endif %}
 
     
 {% endblock %}
