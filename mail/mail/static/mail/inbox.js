@@ -203,6 +203,52 @@ function load_message(id) {
   document.querySelector('#message-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#emails-view').style.display = 'none';
+
+  const emailview = document.querySelector("#message-view");
+  emailview.innerHTML = '';
+
+  fetch(`/emails/${id}`)
+  .then(response => response.json())
+  .then(email => {
+    // Print email
+    console.log(email);
+
+    
+
+    const divContainer = document.createElement('div')
+    emailview.append(divContainer);
+
+    const subj = document.createElement('div')
+    subj.innerHTML = `<h3>${email.subject}</h3>`;
+    divContainer.append(subj);
+
+    const firstLineDiv = document.createElement('div')
+    firstLineDiv.className = 'message-firstline';
+    divContainer.append(firstLineDiv);
+
+    const from = document.createElement('span')
+    from.innerHTML = `From: <strong>&lt;${email.sender}&gt;<strong>`;
+    firstLineDiv.append(from);
+
+    const datetime = document.createElement('span')
+    datetime.innerHTML = `Sent: ${email.timestamp}`;
+    firstLineDiv.append(datetime);
+
+    const recipients = document.createElement('div')
+    recipients.innerHTML = `<p>To: ${email.recipients}</p>`;
+    divContainer.append(recipients);
+
+    const body = document.createElement('div')
+    body.innerHTML = `<p>${email.body}</p>`;
+    divContainer.append(body);
+
+    // document.querySelector('#message-view').innerHTML = `<h3>${email.subject}</h3>`;
+    // document.createElement('div');
+  });
+
+  
+  
+
 }
 
 function markread(id,status){

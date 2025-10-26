@@ -51,3 +51,8 @@ textarea {
 #emails-view, #compose-view, #message-view {
   display: none;
 }
+
+.message-firstline {
+  display: flex;
+  justify-content: space-between;
+}
