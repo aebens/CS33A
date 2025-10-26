@@ -48,6 +48,7 @@ function load_emails(emails){
 
     const id = email.id;
     const readstatus = Boolean(email.read);
+    const archivestatus = Boolean(email.archived);
 
     // Read/unread button
     const readbtn = document.createElement('button');
@@ -95,21 +96,28 @@ function load_emails(emails){
     // Archive button
     const archivebtn = document.createElement('button');
     archivebtn.className = 'btn btn-sm btn-outline-secondary';
-    //archivebtn.className('btn btn-sm btn-outline-secondary archivebtn');
     archivebtn.type = 'button';
-    archivebtn.textContent = 'Archive';
 
-    // Remove the email from the view once archived
-    archivebtn.addEventListener('click', () => {
-      fetch(`/emails/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify({
-            archived: true
-        })
-      })
-      .then(
-        () => div.remove());
-      console.log('Archive clicked for', id);
+    // Dynamically change the button text
+    if (archivestatus){
+      archivebtn.textContent = 'Unarchive';
+    } else {
+      archivebtn.textContent = 'Archive';
+    }
+    
+    archivebtn.addEventListener('click', (event) => {
+      event.stopPropagation() // suggested by the Duck
+
+      const newArchiveStatus = !email.archived;
+
+      // Remove the email from the view once archived
+      archivemessage(id,newArchiveStatus)
+      .then(() => {
+        email.archived = newArchiveStatus
+        div.remove();
+        console.log('Archive clicked for', id);
+      });
+        
     });
 
     div.id = id
@@ -198,6 +206,14 @@ function markread(id,status){
           read: Boolean(status)
       })
   });
-  
+}
+
+function archivemessage(id,status){
+  return fetch(`/emails/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+          archived: Boolean(status)
+      })
+  });
 }
 
