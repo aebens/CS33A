@@ -50,31 +50,62 @@ function load_emails(emails){
 
     // Read/unread button
     const readbtn = document.createElement('button');
-    readbtn.className = 'btn btn-sm btn-outline-secondary';
+    //readbtn.className = 'btn btn-sm btn-outline-secondary';
+    readbtn.className = 'btn btn-sm btn-outline-secondary readbtn';
     readbtn.type = 'button';
     readbtn.textContent = 'Mark Read';
 
     const unreadbtn = document.createElement('button');
-    unreadbtn.className = 'btn btn-sm btn-outline-secondary';
+    // unreadbtn.className = 'btn btn-sm btn-outline-secondary';
+    unreadbtn.className = 'btn btn-sm btn-outline-secondary unreadbtn';
     unreadbtn.type = 'button';
     unreadbtn.textContent = 'Mark Unread';
 
-    // Attach click and status change for the read/unread button, reload page to update css
-    readbtn.addEventListener('click', () => {
+    // Attach click and status change for the read/unread button
+    readbtn.addEventListener('click', (event) => {
+      event.stopPropagation() // suggested by the Duck
       markread(id,"read")
-      location.reload() // courtesy of the Duck
+      const thisdiv = document.getElementById(id)
+      thisdiv.classList.remove('unread');
+      thisdiv.classList.add('read');
+
+      oldbtn = thisdiv.querySelector('.readbtn');
+      oldbtn.replaceWith(unreadbtn);
+
       console.log('Read clicked for', id);
     });
     
-    unreadbtn.addEventListener('click', () => {
+    unreadbtn.addEventListener('click', (event) => {
+      event.stopPropagation() // suggested by the Duck
       markread(id,"unread")
-      location.reload() // courtesy of the Duck
+      const thisdiv = document.getElementById(id)
+      thisdiv.classList.remove('read');
+      thisdiv.classList.add('unread');
+
+      oldbtn = thisdiv.querySelector('.unreadbtn');
+      oldbtn.replaceWith(readbtn);
+
       console.log('Unread clicked for', id);
     });
+
+    // Declare a variable to dynamically change the read button that is displayed
+    let readstatebtn
+    
+    // Dynamically change the div class based on read status and add correct button
+    if (`${email.read}` === 'true'){
+      div.classList.remove('unread');
+      div.classList.add("read");
+      readstatebtn = unreadbtn;
+    } else if (`${email.read}` === 'false'){
+      div.classList.remove('read');
+      div.classList.add('unread');
+      readstatebtn = readbtn;
+    } 
 
     // Archive button
     const archivebtn = document.createElement('button');
     archivebtn.className = 'btn btn-sm btn-outline-secondary';
+    //archivebtn.className('btn btn-sm btn-outline-secondary archivebtn');
     archivebtn.type = 'button';
     archivebtn.textContent = 'Archive';
 
@@ -90,18 +121,6 @@ function load_emails(emails){
         () => div.remove());
       console.log('Archive clicked for', id);
     });
-    
-    // Declare a variable to dynamically change the read button that is displayed
-    let readstatebtn
-    
-    // Dynamically change the div class based on read status and add correct button
-    if (`${email.read}` === "true"){
-      div.classList.add("read")
-      readstatebtn = unreadbtn;
-    } else if (`${email.read}` === "false"){
-      div.classList.add("unread")
-      readstatebtn = readbtn;
-    } 
 
     div.id = id
 
@@ -111,6 +130,7 @@ function load_emails(emails){
     div.addEventListener('click', () => {
       console.log('Message clicked:', div.id);
       load_message(div.id)
+      markread(id,"read")
     });
 
     divContainer.appendChild(div);
