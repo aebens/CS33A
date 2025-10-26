@@ -25,7 +25,7 @@ function compose_email() {
 
 // This clears the current email list and reloads the list
 
-function load_emails(emails){
+function load_emails(emails, mailbox){
   const emailview = document.querySelector("#emails-view");
   const divContainer = document.createElement('div')
   emailview.append(divContainer);
@@ -33,6 +33,9 @@ function load_emails(emails){
   for (const email of emails){
     const div = document.createElement('div')
     div.classList.add("email")
+
+    const id = email.id;
+    div.id = id
 
     const spanTime = document.createElement('span')
     spanTime.className = "email-timestamp";
@@ -46,84 +49,9 @@ function load_emails(emails){
     spanSend.className = "email-sender";
     spanSend.textContent = email.sender;
 
-    const id = email.id;
-    const readstatus = Boolean(email.read);
-    const archivestatus = Boolean(email.archived);
-
-    // Read/unread button
-    const readbtn = document.createElement('button');
-
-    readbtn.className = 'btn btn-sm btn-outline-secondary readbtn';
-    readbtn.type = 'button';
-
-    // Dynamically change the div class based on read status and change button text
-    if (readstatus){
-      readbtn.textContent = 'Mark Unread';
-      div.classList.add("read");
-      div.classList.remove('unread');
-    } else {
-      readbtn.textContent = 'Mark Read';
-      div.classList.add('unread');
-      div.classList.remove('read');
-    }
-
-    readbtn.addEventListener('click', (event) => {
-      event.stopPropagation() // suggested by the Duck
-
-      const newReadStatus = !email.read;
-
-      markread(id,newReadStatus)
-      .then(() => {
-        // Reverse the local variable to match what should be on the server
-        email.read = newReadStatus;
-        const thisdiv = document.getElementById(id);
-
-        if (newReadStatus) {
-          //Currently unread, want to mark read, and the new button will be 'Unread'
-          readbtn.textContent = 'Mark Unread';
-          thisdiv.classList.remove('unread');
-          thisdiv.classList.add('read');
-          console.log('Read clicked for', id);
-        } else {
-          readbtn.textContent = 'Mark Read';
-          thisdiv.classList.remove('read');
-          thisdiv.classList.add('unread');
-          console.log('Unread clicked for', id);
-        }
-      });
-    });
-
-    // Archive button
-    const archivebtn = document.createElement('button');
-    archivebtn.className = 'btn btn-sm btn-outline-secondary';
-    archivebtn.type = 'button';
-
-    // Dynamically change the button text
-    if (archivestatus){
-      archivebtn.textContent = 'Unarchive';
-    } else {
-      archivebtn.textContent = 'Archive';
-    }
     
-    archivebtn.addEventListener('click', (event) => {
-      event.stopPropagation() // suggested by the Duck
-
-      const newArchiveStatus = !email.archived;
-
-      // Remove the email from the view once archived
-      archivemessage(id,newArchiveStatus)
-      .then(() => {
-        email.archived = newArchiveStatus
-        div.remove();
-        console.log('Archive clicked for', id);
-      });
-        
-    });
-
-    div.id = id
-
-    div.append(spanTime, spanSend, spanSubj, readbtn, archivebtn);
-
+    div.append(spanTime, spanSend, spanSubj);
+    
     // Add click function to open message
     div.addEventListener('click', () => {
       console.log('Message clicked:', div.id);
@@ -131,7 +59,85 @@ function load_emails(emails){
       markread(id,"read")
     });
 
+    if (mailbox != "sent"){
+
+      const readstatus = Boolean(email.read);
+      const archivestatus = Boolean(email.archived);
+
+      // Read/unread button
+      const readbtn = document.createElement('button');
+
+      readbtn.className = 'btn btn-sm btn-outline-secondary readbtn';
+      readbtn.type = 'button';
+
+      // Dynamically change the div class based on read status and change button text
+      if (readstatus){
+        readbtn.textContent = 'Mark Unread';
+        div.classList.add("read");
+        div.classList.remove('unread');
+      } else {
+        readbtn.textContent = 'Mark Read';
+        div.classList.add('unread');
+        div.classList.remove('read');
+      }
+
+      readbtn.addEventListener('click', (event) => {
+        event.stopPropagation() // suggested by the Duck
+
+        const newReadStatus = !email.read;
+
+        markread(id,newReadStatus)
+        .then(() => {
+          // Reverse the local variable to match what should be on the server
+          email.read = newReadStatus;
+          const thisdiv = document.getElementById(id);
+
+          if (newReadStatus) {
+            //Currently unread, want to mark read, and the new button will be 'Unread'
+            readbtn.textContent = 'Mark Unread';
+            thisdiv.classList.remove('unread');
+            thisdiv.classList.add('read');
+            console.log('Read clicked for', id);
+          } else {
+            readbtn.textContent = 'Mark Read';
+            thisdiv.classList.remove('read');
+            thisdiv.classList.add('unread');
+            console.log('Unread clicked for', id);
+          }
+        });
+      });
+
+      // Archive button
+      const archivebtn = document.createElement('button');
+      archivebtn.className = 'btn btn-sm btn-outline-secondary';
+      archivebtn.type = 'button';
+
+      // Dynamically change the button text
+      if (archivestatus){
+        archivebtn.textContent = 'Unarchive';
+      } else {
+        archivebtn.textContent = 'Archive';
+      }
+      
+      archivebtn.addEventListener('click', (event) => {
+        event.stopPropagation() // suggested by the Duck
+
+        const newArchiveStatus = !email.archived;
+
+        // Remove the email from the view once archived
+        archivemessage(id,newArchiveStatus)
+        .then(() => {
+          email.archived = newArchiveStatus
+          div.remove();
+          console.log('Archive clicked for', id);
+        });
+          
+      });
+      div.append(readbtn, archivebtn);
+    }
+
     divContainer.appendChild(div);
+    
   }
   
 };
@@ -152,7 +158,7 @@ function load_mailbox(mailbox) {
     .then(emails => {
         // Print emails
         console.log(emails);
-        load_emails(emails);
+        load_emails(emails, mailbox);
 
     });
 }
