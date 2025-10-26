@@ -48,6 +48,6 @@ textarea {
 }
 
 /* hide views by default to prevent compose form from being exposed during refresh */
-#emails-view, #compose-view {
+#emails-view, #compose-view, #message-view {
   display: none;
 }

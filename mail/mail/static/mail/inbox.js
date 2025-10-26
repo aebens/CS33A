@@ -46,6 +46,8 @@ function load_emails(emails){
     spanSend.className = "email-sender";
     spanSend.textContent = email.sender;
 
+    const id = email.id
+
     // Read/unread button
     const readbtn = document.createElement('button');
     readbtn.className = 'btn btn-sm btn-outline-secondary';
@@ -57,27 +59,17 @@ function load_emails(emails){
     unreadbtn.type = 'button';
     unreadbtn.textContent = 'Mark Unread';
 
-    // Change the text in the read/unread button depending on status
+    // Attach click and status change for the read/unread button, reload page to update css
     readbtn.addEventListener('click', () => {
-      fetch(`/emails/${email.id}`, {
-        method: 'PUT',
-        body: JSON.stringify({
-            read: true
-        })
-      })
+      markread(id,"read")
       location.reload() // courtesy of the Duck
-      console.log('Read clicked for', email.id);
+      console.log('Read clicked for', id);
     });
     
     unreadbtn.addEventListener('click', () => {
-      fetch(`/emails/${email.id}`, {
-        method: 'PUT',
-        body: JSON.stringify({
-            read: false
-        })
-      })
+      markread(id,"unread")
       location.reload() // courtesy of the Duck
-      console.log('Unread clicked for', email.id);
+      console.log('Unread clicked for', id);
     });
 
     // Archive button
@@ -88,7 +80,7 @@ function load_emails(emails){
 
     // Remove the email from the view once archived
     archivebtn.addEventListener('click', () => {
-      fetch(`/emails/${email.id}`, {
+      fetch(`/emails/${id}`, {
         method: 'PUT',
         body: JSON.stringify({
             archived: true
@@ -96,11 +88,13 @@ function load_emails(emails){
       })
       .then(
         () => div.remove());
-      console.log('Archive clicked for', email.id);
+      console.log('Archive clicked for', id);
     });
-      
+    
+    // Declare a variable to dynamically change the read button that is displayed
     let readstatebtn
     
+    // Dynamically change the div class based on read status and add correct button
     if (`${email.read}` === "true"){
       div.classList.add("read")
       readstatebtn = unreadbtn;
@@ -109,7 +103,7 @@ function load_emails(emails){
       readstatebtn = readbtn;
     } 
 
-    div.id = `${email.id}`
+    div.id = id
 
     div.append(spanTime, spanSend, spanSubj, readstatebtn, archivebtn);
 
@@ -185,5 +179,24 @@ function load_message(id) {
   document.querySelector('#message-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#emails-view').style.display = 'none';
+}
+
+function markread(id,status){
+  if(status==="read"){
+    fetch(`/emails/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+          read: true
+      })
+    })
+  } else if (status==="unread"){
+    fetch(`/emails/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+          read: false
+      })
+    })
+  }
+  
 }
 
