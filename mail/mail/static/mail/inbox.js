@@ -46,61 +46,51 @@ function load_emails(emails){
     spanSend.className = "email-sender";
     spanSend.textContent = email.sender;
 
-    const id = email.id
+    const id = email.id;
+    const readstatus = Boolean(email.read);
 
     // Read/unread button
     const readbtn = document.createElement('button');
-    //readbtn.className = 'btn btn-sm btn-outline-secondary';
+
     readbtn.className = 'btn btn-sm btn-outline-secondary readbtn';
     readbtn.type = 'button';
-    readbtn.textContent = 'Mark Read';
 
-    const unreadbtn = document.createElement('button');
-    // unreadbtn.className = 'btn btn-sm btn-outline-secondary';
-    unreadbtn.className = 'btn btn-sm btn-outline-secondary unreadbtn';
-    unreadbtn.type = 'button';
-    unreadbtn.textContent = 'Mark Unread';
+    // Dynamically change the div class based on read status and change button text
+    if (readstatus){
+      readbtn.textContent = 'Mark Unread';
+      div.classList.add("read");
+      div.classList.remove('unread');
+    } else {
+      readbtn.textContent = 'Mark Read';
+      div.classList.add('unread');
+      div.classList.remove('read');
+    }
 
-    // Attach click and status change for the read/unread button
     readbtn.addEventListener('click', (event) => {
       event.stopPropagation() // suggested by the Duck
-      markread(id,"read")
-      const thisdiv = document.getElementById(id)
-      thisdiv.classList.remove('unread');
-      thisdiv.classList.add('read');
 
-      oldbtn = thisdiv.querySelector('.readbtn');
-      oldbtn.replaceWith(unreadbtn);
+      const newReadStatus = !email.read;
 
-      console.log('Read clicked for', id);
+      markread(id,newReadStatus)
+      .then(() => {
+        // Reverse the local variable to match what should be on the server
+        email.read = newReadStatus;
+        const thisdiv = document.getElementById(id);
+
+        if (newReadStatus) {
+          //Currently unread, want to mark read, and the new button will be 'Unread'
+          readbtn.textContent = 'Mark Unread';
+          thisdiv.classList.remove('unread');
+          thisdiv.classList.add('read');
+          console.log('Read clicked for', id);
+        } else {
+          readbtn.textContent = 'Mark Read';
+          thisdiv.classList.remove('read');
+          thisdiv.classList.add('unread');
+          console.log('Unread clicked for', id);
+        }
+      });
     });
-    
-    unreadbtn.addEventListener('click', (event) => {
-      event.stopPropagation() // suggested by the Duck
-      markread(id,"unread")
-      const thisdiv = document.getElementById(id)
-      thisdiv.classList.remove('read');
-      thisdiv.classList.add('unread');
-
-      oldbtn = thisdiv.querySelector('.unreadbtn');
-      oldbtn.replaceWith(readbtn);
-
-      console.log('Unread clicked for', id);
-    });
-
-    // Declare a variable to dynamically change the read button that is displayed
-    let readstatebtn
-    
-    // Dynamically change the div class based on read status and add correct button
-    if (`${email.read}` === 'true'){
-      div.classList.remove('unread');
-      div.classList.add("read");
-      readstatebtn = unreadbtn;
-    } else if (`${email.read}` === 'false'){
-      div.classList.remove('read');
-      div.classList.add('unread');
-      readstatebtn = readbtn;
-    } 
 
     // Archive button
     const archivebtn = document.createElement('button');
@@ -124,7 +114,7 @@ function load_emails(emails){
 
     div.id = id
 
-    div.append(spanTime, spanSend, spanSubj, readstatebtn, archivebtn);
+    div.append(spanTime, spanSend, spanSubj, readbtn, archivebtn);
 
     // Add click function to open message
     div.addEventListener('click', () => {
@@ -202,21 +192,12 @@ function load_message(id) {
 }
 
 function markread(id,status){
-  if(status==="read"){
-    fetch(`/emails/${id}`, {
+  return fetch(`/emails/${id}`, {
       method: 'PUT',
       body: JSON.stringify({
-          read: true
+          read: Boolean(status)
       })
-    })
-  } else if (status==="unread"){
-    fetch(`/emails/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify({
-          read: false
-      })
-    })
-  }
+  });
   
 }
 
