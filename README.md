@@ -36,3 +36,4 @@ If you include any additional Python packages when working on this project, incl
 - Do I need to worry about finding the "latest" emails?  See Spec under mailbox, item 2.
 - "Once an email has been archived or unarchived, load the user’s inbox." >> I am deleting the itme instead though.
 - Don't forget to fix the sent box.
+- Fix the read/archive buttons when viewing a message.
