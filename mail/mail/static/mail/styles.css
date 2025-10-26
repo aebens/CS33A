@@ -40,9 +40,14 @@ textarea {
 }
 
 .read{
-    background-color: #e3e3e3;
+    background-color: #f0f0f0;
 }
 
 .unread{
     background-color: #fff;
+}
+
+/* hide views by default to prevent compose form from being exposed during refresh */
+#emails-view, #compose-view {
+  display: none;
 }

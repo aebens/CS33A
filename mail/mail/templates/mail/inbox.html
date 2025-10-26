@@ -10,11 +10,6 @@
     <button class="btn btn-sm btn-outline-primary" id="archived">Archived</button>
     <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
     <hr>
-    <br>
-    <button class="btn btn-sm btn-outline-secondary" id="read">Read/Unread</button>
-    <button class="btn btn-sm btn-outline-secondary" id="archive">Archive</button>
-
-    <br><br>
 
     <div id="emails-view">
     </div>
@@ -35,6 +30,15 @@
             <input id="submit" type="submit" class="btn btn-primary"/>
         </form>
     </div>
+
+    <div id="message-view">
+        <br>
+        <button class="btn btn-sm btn-outline-secondary" id="read">Read/Unread</button>
+        <button class="btn btn-sm btn-outline-secondary" id="archive">Archive</button>
+
+        <br><br>
+    </div>
+
 {% endblock %}
 
 {% block script %}

@@ -23,7 +23,7 @@ function compose_email() {
   document.querySelector('#compose-body').value = '';
 }
 
-// this clears the current email list and reloads the list
+// This clears the current email list and reloads the list
 
 function load_emails(emails){
   const emailview = document.querySelector("#emails-view");
@@ -46,7 +46,7 @@ function load_emails(emails){
     spanSend.className = "email-sender";
     spanSend.textContent = email.sender;
 
-    // read/unread button
+    // Read/unread button
     const readbtn = document.createElement('button');
     readbtn.className = 'btn btn-sm btn-outline-secondary';
     readbtn.type = 'button';
@@ -57,7 +57,7 @@ function load_emails(emails){
     unreadbtn.type = 'button';
     unreadbtn.textContent = 'Mark Unread';
 
-      //change the text in the button depending on status
+    // Change the text in the read/unread button depending on status
     readbtn.addEventListener('click', () => {
       fetch(`/emails/${email.id}`, {
         method: 'PUT',
@@ -65,11 +65,10 @@ function load_emails(emails){
             read: true
         })
       })
-      location.reload() // courtesy of the Ducka
+      location.reload() // courtesy of the Duck
       console.log('Read clicked for', email.id);
     });
-      
-
+    
     unreadbtn.addEventListener('click', () => {
       fetch(`/emails/${email.id}`, {
         method: 'PUT',
@@ -81,13 +80,13 @@ function load_emails(emails){
       console.log('Unread clicked for', email.id);
     });
 
-    // archive button
+    // Archive button
     const archivebtn = document.createElement('button');
     archivebtn.className = 'btn btn-sm btn-outline-secondary';
     archivebtn.type = 'button';
     archivebtn.textContent = 'Archive';
 
-      //remove the email from the view once archived
+    // Remove the email from the view once archived
     archivebtn.addEventListener('click', () => {
       fetch(`/emails/${email.id}`, {
         method: 'PUT',
@@ -114,6 +113,12 @@ function load_emails(emails){
 
     div.append(spanTime, spanSend, spanSubj, readstatebtn, archivebtn);
 
+    // Add click function to open message
+    div.addEventListener('click', () => {
+      console.log('Message clicked:', div.id);
+      load_message(div.id)
+    });
+
     divContainer.appendChild(div);
   }
   
@@ -124,6 +129,7 @@ function load_mailbox(mailbox) {
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#message-view').style.display = 'none';
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
@@ -171,3 +177,13 @@ document.querySelector('#compose-form').addEventListener('submit', (event) => {
 
   })
 })
+
+// View Email Message
+
+// Show the message and hide other views
+function load_message(id) {
+  document.querySelector('#message-view').style.display = 'block';
+  document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#emails-view').style.display = 'none';
+}
+
