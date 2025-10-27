@@ -33,7 +33,7 @@ function compose_email(prefill = null) {
   const senderp = p.sender ?? '';
   const timep = p.timestamp ?? '';
 
-  // This was done with the help of the Duck.
+  // This was done with the help of the Duck because of issues with undefined/blank.
   if (!subj) {
     subject.value = '';
   } else {
@@ -57,10 +57,43 @@ function compose_email(prefill = null) {
   // Puts the cursor in the body for the user (with help from the Duck)
   body.focus();
   body.setSelectionRange(0, 0);
+
 }
 
-// This clears the current email list and reloads the list
+// Posting Emails
+// using the preventDefault method was suggested by the Duck (with the explicit event passed)
 
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelector('#compose-form').addEventListener('submit', (event) => {
+    event.preventDefault()
+
+    const recipients = document.querySelector('#compose-recipients').value
+    const subject = document.querySelector('#compose-subject').value
+    const body = document.querySelector('#compose-body').value
+
+    fetch('/emails', {
+      method: 'POST',
+      body: JSON.stringify({
+        recipients: recipients,
+        subject: subject,
+        body: body
+      })
+    })
+    .then(response => response.json())
+    .then(result => {
+      //Print result
+      console.log(result);
+      load_mailbox('sent');
+    })
+
+    .catch(error => {
+        console.log('Error:', error);
+    });
+
+  });
+});
+
+// This clears the current email list and reloads the list
 function load_emails(emails, mailbox){
   const emailview = document.querySelector("#emails-view");
   const divContainer = document.createElement('div')
@@ -227,39 +260,6 @@ function load_mailbox(mailbox) {
     });
 }
 
-// Posting Emails
-// using the preventDefault method was suggested by the Duck (with the explicit event passed)
-
-document.addEventListener('DOMContentLoaded', function() {
-document.querySelector('#compose-form').addEventListener('submit', (event) => {
-  event.preventDefault()
-
-  const recipients = document.querySelector('#compose-recipients').value
-  const subject = document.querySelector('#compose-subject').value
-  const body = document.querySelector('#compose-body').value
-
-  fetch('/emails', {
-    method: 'POST',
-    body: JSON.stringify({
-      recipients: recipients,
-      subject: subject,
-      body: body
-    })
-  })
-  .then(response => response.json())
-  .then(result => {
-    //Print result
-    console.log(result);
-    load_mailbox('inbox');
-  })
-
-  .catch(error => {
-      console.log('Error:', error);
-  });
-
-  });
-});
-
 // View Email Message
 
 // Show the message and hide other views
@@ -295,7 +295,6 @@ function load_message(id) {
 
     divNav.classList.remove('unread');
     divNav.classList.remove('read');
-    
 
     const subj = document.createElement('div')
     subj.innerHTML = `<h3>${email.subject}</h3>`;
@@ -340,4 +339,3 @@ function archivemessage(id,status){
       })
   });
 }
-
