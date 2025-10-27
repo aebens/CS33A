@@ -4,23 +4,59 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
-  document.querySelector('#compose').addEventListener('click', compose_email);
+  document.querySelector('#compose').addEventListener('click', () => compose_email());
 
   // By default, load the inbox
-
   load_mailbox('inbox');
+
 });
 
-function compose_email() {
+// This sets the email info as null as default unless something is given to prefill.
+function compose_email(prefill = null) {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#message-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
 
-  // Clear out composition fields
-  document.querySelector('#compose-recipients').value = '';
-  document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-body').value = '';
+  const recipients = document.querySelector('#compose-recipients');
+  const subject = document.querySelector('#compose-subject');
+  const body = document.querySelector('#compose-body');
+
+  // Cleans the prefill value so "undefined" never appears
+  const p = prefill || {};
+
+  // The use of the ?? will set the default if the prefill isn't available.
+  recipients.value = p.sender ?? '';
+  const subj = p.subject ?? '';
+  const bodyp = p.body ?? '';
+  const senderp = p.sender ?? '';
+  const timep = p.timestamp ?? '';
+
+  // This was done with the help of the Duck.
+  if (!subj) {
+    subject.value = '';
+  } else {
+    subject.value = subj.startsWith('RE:') ? subj : 'RE: ' + subj;
+  }
+  
+  if (bodyp) {
+    body.value = '\n\nOn ' + timep + ' ' + senderp + ' wrote: \n' + bodyp ?? '';
+  } else {
+    body.value = '';
+  }
+  
+
+  // Clear out the fields if there is no prefill info
+  if (!prefill){
+    recipients.value = '';
+    subject.value = '';
+    body.value = '';
+  }
+
+  // Puts the cursor in the body for the user (with help from the Duck)
+  body.focus();
+  body.setSelectionRange(0, 0);
 }
 
 // This clears the current email list and reloads the list
@@ -32,10 +68,10 @@ function load_emails(emails, mailbox){
   
   for (const email of emails){
     const div = document.createElement('div')
-    div.classList.add("email")
+    div.classList.add("email");
 
-    const id = email.id;
-    div.id = id
+    const id = email.id
+    div.id = id;
 
     const spanTime = document.createElement('span')
     spanTime.className = "email-timestamp";
@@ -54,13 +90,12 @@ function load_emails(emails, mailbox){
     // Add click function to open message
     div.addEventListener('click', () => {
       console.log('Message clicked:', div.id);
-      load_message(div.id)
+      load_message(div.id);
     });
 
     if (mailbox != "sent"){
 
       const readstatus = Boolean(email.read);
-      const newReadStatus = !email.read;
 
       const readbtn = readbutton(email);
       const archivebtn = archivebutton(email);
@@ -154,6 +189,23 @@ function archivebutton(email){
   return archivebtn;
 }
 
+function replybutton(email){
+  const id = email.id;
+
+  // Reply button
+  const replybtn = document.createElement('button');
+  replybtn.className = 'btn btn-sm btn-outline-secondary replybtn';
+  replybtn.type = 'button';
+  replybtn.textContent = 'Reply';
+
+  replybtn.addEventListener('click', (event) => {
+    event.stopPropagation() // suggested by the Duck
+      compose_email(email);
+    });
+  
+  return replybtn;
+}
+
 function load_mailbox(mailbox) {
   
   // Show the mailbox and hide other views
@@ -217,7 +269,7 @@ function load_message(id) {
   document.querySelector('#emails-view').style.display = 'none';
 
   markread(id,"read")
-  
+
   // Create the view for the email message by wiping out existing content
   const emailview = document.querySelector("#message-view");
   emailview.innerHTML = '';
@@ -236,9 +288,10 @@ function load_message(id) {
 
     const readbtn = readbutton(email);
     const archivebtn = archivebutton(email);
+    const replybtn = replybutton(email);
 
     checkReadStatus(divNav, readbtn, Boolean(email.read));
-    divNav.append(readbtn, archivebtn);
+    divNav.append(readbtn, archivebtn, replybtn);
 
     divNav.classList.remove('unread');
     divNav.classList.remove('read');
