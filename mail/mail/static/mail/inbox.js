@@ -49,14 +49,12 @@ function load_emails(emails, mailbox){
     spanSend.className = "email-sender";
     spanSend.textContent = email.sender;
 
-    
     div.append(spanTime, spanSend, spanSubj);
     
     // Add click function to open message
     div.addEventListener('click', () => {
       console.log('Message clicked:', div.id);
       load_message(div.id)
-      markread(id,"read")
     });
 
     if (mailbox != "sent"){
@@ -89,7 +87,7 @@ function checkReadStatus(div, readbtn, readstatus){
     div.classList.remove('read');
     readbtn.textContent = 'Mark Read';
   }
-  return readbtn
+  return readbtn;
 }
 
 function readbutton(email){
@@ -145,7 +143,7 @@ function archivebutton(email){
     // Remove the email from the view once archived
     archivemessage(id,newArchiveStatus)
     .then(() => {
-      email.archived = newArchiveStatus
+      email.archived = newArchiveStatus;
       load_mailbox('inbox');
       //div.remove();
       console.log('Archive clicked for', email.id);
@@ -207,8 +205,8 @@ document.querySelector('#compose-form').addEventListener('submit', (event) => {
       console.log('Error:', error);
   });
 
-  })
-})
+  });
+});
 
 // View Email Message
 
@@ -218,6 +216,8 @@ function load_message(id) {
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#emails-view').style.display = 'none';
 
+  markread(id,"read")
+  
   // Create the view for the email message by wiping out existing content
   const emailview = document.querySelector("#message-view");
   emailview.innerHTML = '';
@@ -232,12 +232,16 @@ function load_message(id) {
     emailview.append(divContainer);
 
     const divNav = document.createElement('div')
+    divContainer.append(divNav);
 
+    const readbtn = readbutton(email);
+    const archivebtn = archivebutton(email);
 
+    checkReadStatus(divNav, readbtn, Boolean(email.read));
+    divNav.append(readbtn, archivebtn);
 
-
-
-
+    divNav.classList.remove('unread');
+    divNav.classList.remove('read');
     
 
     const subj = document.createElement('div')
