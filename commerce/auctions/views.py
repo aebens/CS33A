@@ -48,7 +48,7 @@ class NewCommentForm(forms.Form):
 # This is the default route and shows only active listings.
 def index(request):
     listings = currentprices(Listing.objects.filter(status="Active"))
-
+    print("active listings count:", listings.count()) 
     return render(request, "auctions/index.html", {
         "listings": listings,
         "bids": Bid.objects.all()

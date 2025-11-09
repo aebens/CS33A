@@ -5,7 +5,7 @@
 {% block body %}
     <h2>My Listings</h2>
 
-    {% if listing %}
+    {% if listings %}
         <div class = "listings-grid">
             {% for listing in listings %}
                 <a href="{% url 'listing' listing.id %}" class="card-link">
