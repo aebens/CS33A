@@ -7,6 +7,7 @@
             {{ newpostform }}
             <input type="submit" value="Post">
         </form>
+        <input type="hidden" id="csrf-token" value="{{ csrf_token }}"> <!-- this is for the edit post -->
         <hr>
         
         <div class="posts">
@@ -14,6 +15,12 @@
                 <div class="post mb-3 p-3 border">
                     <a href="/profile/{{ post.user.username }}"><h5>{{ post.user.username }}</h5></a>
                     <p>{{ post.content }}</p>
+
+                    {% if user.is_authenticated and user == post.user %}
+                        <button class="btn btn-sm btn-outline-secondary edit-btn" 
+                                data-post-id="{{ post.id }}">Edit</button>
+                    {% endif %}
+
                     <span class="username text-muted">{{ post.created }}</span>
                     <span class="likes ml-3">
                             🤍 {{ post.like_count }}

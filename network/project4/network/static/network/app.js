@@ -57,3 +57,50 @@ function updateFollowerCount(isNowFollowing, realCount) {
         followerCountElement.textContent = currentText.replace(/\d+/, newCount);
     }
 }
+
+// Edit post -- all three buttons are in this listener (edit, save, cancel)
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('edit-btn')) {
+        const postId = e.target.dataset.postId;
+        const post = e.target.closest('.post');
+        const content = post.querySelector('p');
+        const originalText = content.textContent;
+        
+        // Replace paragraph with edit functions
+        content.innerHTML = `
+            <textarea class="form-control" rows="3">${originalText}</textarea>
+            <button class="btn btn-primary btn-sm mt-2 save-btn" data-post-id="${postId}">Save</button>
+            <button class="btn btn-secondary btn-sm mt-2 cancel-btn">Cancel</button>
+        `;
+        e.target.style.display = 'none';
+    }
+    
+    if (e.target.classList.contains('save-btn')) {
+        const postId = e.target.dataset.postId;
+        const post = e.target.closest('.post');
+        const textarea = post.querySelector('textarea');
+        const newContent = textarea.value;
+
+        const csrfToken = document.getElementById('csrf-token')?.value;
+        
+        fetch('/edit_post/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                "X-CSRFToken": csrfToken
+            },
+            body: JSON.stringify({post_id: postId, content: newContent})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                post.querySelector('p').textContent = newContent;
+                post.querySelector('.edit-btn').style.display = 'inline-block';
+            }
+        });
+    }
+    
+    if (e.target.classList.contains('cancel-btn')) {
+        location.reload();
+    }
+});

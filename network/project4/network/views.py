@@ -108,6 +108,40 @@ def following(request):
             "following_users": following_users
     })
 
+@login_required
+def edit_post(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        post_id = data.get('post_id')
+        new_content = data.get('content')
+        
+        # Ashley to vet the error checking more.
+
+        # Prevents an empty post
+        if not new_content or not new_content.strip():
+            return JsonResponse({'success': False, 'error': 'Post cannot be empty'})
+        
+        try:
+            post = Post.objects.get(id=post_id)
+            
+            # Redundancy to ensure you can only edit your own post.
+            if post.user != request.user:
+                return JsonResponse({'success': False, 'error': 'Permission denied'})
+            
+            # Update the post and remove trailing spaces
+            post.content = new_content.strip()
+            post.save()
+            
+            return JsonResponse({
+                'success': True,
+                'content': post.content
+            })
+            
+        except Post.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Post not found'})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
+
 def login_view(request):
     if request.method == "POST":
 
