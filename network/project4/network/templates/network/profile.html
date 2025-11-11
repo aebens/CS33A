@@ -1,18 +1,16 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
+
     <div class="container mt-4">
-        <form method="post">
-            {% csrf_token %}
-            {{ newpostform }}
-            <input type="submit" value="Post">
-        </form>
-        <hr>
-        
+
+        <h1>{{ profile_user.username }}</h1>
+        <h3>{{ profile_user.follower_count }} follower{{ profile_user.follower_count|pluralize }} | following {{ profile_user.following_count }}</h3>
+      
         <div class="posts">
             {% for post in posts %}
                 <div class="post mb-3 p-3 border">
-                    <a href="/profile/{{ post.user.username }}"><h5>{{ post.user.username }}</h5></a>
+                    <h5>{{ post.user.username }}</h5>
                     <p>{{ post.content }}</p>
                     <span class="username text-muted">{{ post.created }}</span>
                     <span class="likes ml-3">

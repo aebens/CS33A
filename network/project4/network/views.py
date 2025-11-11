@@ -45,6 +45,22 @@ def index(request):
         "posts": posts
     })
 
+def profile(request, username):
+    try:
+        profile_user = User.objects.get(username=username)
+        posts = Post.objects.filter(user=profile_user)
+        
+        return render(request, "network/profile.html", {
+            "profile_user": profile_user,
+            "posts": posts
+        })
+    
+    # Handle case where user doesn't exist (what if their profile is deleted?)
+    except User.DoesNotExist:
+        return render(request, "network/error.html", {
+            "message": f"User {username} was not found."
+        })
+
 
 def login_view(request):
     if request.method == "POST":
