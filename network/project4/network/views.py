@@ -1,9 +1,11 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django import forms
+import json
 
 from .models import User, Post
 
@@ -49,10 +51,16 @@ def profile(request, username):
     try:
         profile_user = User.objects.get(username=username)
         posts = Post.objects.filter(user=profile_user)
+
+        # Add the following status
+        is_following = False
+        if request.user.is_authenticated:
+            is_following = request.user.is_following(profile_user)
         
         return render(request, "network/profile.html", {
             "profile_user": profile_user,
-            "posts": posts
+            "posts": posts,
+            "is_following": is_following
         })
     
     # Handle case where user doesn't exist (what if their profile is deleted?)
@@ -61,6 +69,44 @@ def profile(request, username):
             "message": f"User {username} was not found."
         })
 
+@login_required    
+def follow(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        username = data.get('username')
+        action = data.get('action')
+        
+        try:
+            user_to_follow = User.objects.get(username=username)
+            
+            if action == 'follow':
+                request.user.following.add(user_to_follow)
+                following = True
+            else:
+                request.user.following.remove(user_to_follow)
+                following = False
+                
+            return JsonResponse({
+                'success': True,
+                'following': following,
+                'follower_count': user_to_follow.follower_count()
+            })
+        except User.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'User not found'})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
+
+@login_required
+def following(request):    
+    following_users = request.user.following.all()
+
+    # Performs a SQL equivalent of an IN function
+    posts = Post.objects.filter(user__in=following_users).order_by('-created')
+    
+    return render(request, "network/following.html", {
+            "posts": posts,
+            "following_users": following_users
+    })
 
 def login_view(request):
     if request.method == "POST":

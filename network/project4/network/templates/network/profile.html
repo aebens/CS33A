@@ -3,10 +3,19 @@
 {% block body %}
 
     <div class="container mt-4">
+        <input type="hidden" id="csrf-token" value="{{ csrf_token }}">
 
         <h1>{{ profile_user.username }}</h1>
-        <h3>{{ profile_user.follower_count }} follower{{ profile_user.follower_count|pluralize }} | following {{ profile_user.following_count }}</h3>
+        <h3 id="followers">{{ profile_user.follower_count }} follower{{ profile_user.follower_count|pluralize }} | following {{ profile_user.following_count }}</h3>
       
+        {% if user.is_authenticated and user != profile_user %}
+            <button id="follow-btn" 
+                    data-username="{{ profile_user.username }}"
+                    class="btn {% if is_following %}btn-outline-primary{% else %}btn-primary{% endif %}">
+                {% if is_following %}Unfollow{% else %}Follow{% endif %}
+            </button>
+        {% endif %}
+
         <div class="posts">
             {% for post in posts %}
                 <div class="post mb-3 p-3 border">
