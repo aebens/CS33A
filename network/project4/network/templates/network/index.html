@@ -32,7 +32,7 @@
                         </button>
                     {% else %}
                         <span class="likes ml-3">🤍 {{ post.like_count }}</span>
-                    {% endif %}                
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>
@@ -43,7 +43,7 @@
             {% endif %}
 
             <span class="mx-3">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
-            
+
             {% if page.has_next %}
                 <a href="?page={{ page.next_page_number }}">Next</a>
             {% endif %}

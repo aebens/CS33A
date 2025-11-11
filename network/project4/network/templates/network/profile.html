@@ -22,9 +22,17 @@
                     <h5>{{ post.user.username }}</h5>
                     <p>{{ post.content }}</p>
                     <span class="username text-muted">{{ post.created }}</span>
-                    <span class="likes ml-3">
-                            🤍 {{ post.like_count }}
-                    </span>
+                    
+                    {% if user.is_authenticated %}
+                        <button class="btn btn-sm like-btn" 
+                                data-post-id="{{ post.id }}"
+                                style="border: none; background: none;">
+                            <span class="heart">{% if user in post.like.all %}❤️{% else %}🤍{% endif %}</span>
+                            <span class="like-count">{{ post.like_count }}</span>
+                        </button>
+                    {% else %}
+                        <span class="likes ml-3">🤍 {{ post.like_count }}</span>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>
