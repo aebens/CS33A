@@ -18,19 +18,13 @@ class User(AbstractUser):
         return self.following.filter(id=user.id).exists()
 
 class Post(models.Model):
-    title = models.CharField(max_length=128)
     content = models.TextField(max_length=500)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False) #Soft delete
     like = models.ManyToManyField(User, related_name="liked_posts", blank=True)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name="replies", null=True, blank=True) # Allows threads
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
-
-    def __str__(self):
-        # This keeps the title to 50 characters for shorter previews.
-        title_preview = self.title[:50] + "..." if len(self.title) > 50 else self.title
-        return f"{self.user.username}: {title_preview}" 
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts") 
     
     def like_count(self):
         return self.like.count()

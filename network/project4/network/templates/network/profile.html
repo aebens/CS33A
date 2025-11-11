@@ -17,7 +17,7 @@
         {% endif %}
 
         <div class="posts">
-            {% for post in posts %}
+            {% for post in page %}
                 <div class="post mb-3 p-3 border">
                     <h5>{{ post.user.username }}</h5>
                     <p>{{ post.content }}</p>
@@ -27,6 +27,18 @@
                     </span>
                 </div>
             {% endfor %}
+        </div>
+
+        <div class="pagination mt-3">
+            {% if page.has_previous %}
+                <a href="?page={{ page.previous_page_number }}">Previous</a>
+            {% endif %}
+
+            <span class="mx-3">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+            
+            {% if page.has_next %}
+                <a href="?page={{ page.next_page_number }}">Next</a>
+            {% endif %}
         </div>
     </div>
 

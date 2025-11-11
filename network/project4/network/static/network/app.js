@@ -58,7 +58,7 @@ function updateFollowerCount(isNowFollowing, realCount) {
     }
 }
 
-// Edit post -- all three buttons are in this listener (edit, save, cancel)
+// Post buttons inc. edit post -- all three buttons are in this listener (edit, save, cancel) + like
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('edit-btn')) {
         const postId = e.target.dataset.postId;
@@ -102,5 +102,40 @@ document.addEventListener('click', function(e) {
     
     if (e.target.classList.contains('cancel-btn')) {
         location.reload();
+    }
+
+    // Like Button (Liked is red heart, unliked is white heart)
+    if (e.target.classList.contains('like-btn') || e.target.closest('.like-btn')) {
+        const likeBtn = e.target.classList.contains('like-btn') ? e.target : e.target.closest('.like-btn');
+        const postId = likeBtn.dataset.postId;
+        const heart = likeBtn.querySelector('.heart');
+        const likeCount = likeBtn.querySelector('.like-count');
+        const isLiked = heart.textContent === '❤️';
+        
+        const csrfToken = document.getElementById('csrf-token').value;
+        
+        fetch('/like_post/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                'post_id': postId,
+                'action': isLiked ? 'unlike' : 'like'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                heart.textContent = data.liked ? '❤️' : '🤍';
+                likeCount.textContent = data.like_count;
+            } else {
+                console.error('Error:', data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     }
 });

@@ -5,12 +5,10 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django import forms
+from django.core.paginator import Paginator
 import json
 
 from .models import User, Post
-
-# class NewPost(forms.Form):
-#    PostContent = forms.CharField(widget=forms.Textarea, label="New Post", max_length=500, help_text="Maximum of 500 characters")
 
 class NewPostForm(forms.ModelForm):
     class Meta:
@@ -29,28 +27,44 @@ class NewPostForm(forms.ModelForm):
             visible.field.widget.attrs["class"] = "form-control mb-3"
 
 def index(request):
+    page_number = request.GET.get('page', 1)
+    posts = Post.objects.all()
+    p = Paginator(posts,20)
+
+    # Convert the page number to integer or give default page 1
+    try:
+        page = p.page(int(page_number))
+    except:
+        page = p.page(1)
+    
     if request.method == "POST":
         form = NewPostForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
             post.user = request.user
-            post.title = ""  # Set empty title or default value
             post.save()
             return HttpResponseRedirect(reverse("index"))
     else:
         form = NewPostForm()
 
-    posts = Post.objects.all()
-    
     return render(request, "network/index.html", {
         "newpostform": form,
-        "posts": posts
+        "page": page,        
     })
 
 def profile(request, username):
+    page_number = request.GET.get('page', 1)
+
     try:
         profile_user = User.objects.get(username=username)
         posts = Post.objects.filter(user=profile_user)
+        p = Paginator(posts,20)
+
+        # Convert the page number to integer or give default page 1
+        try:
+            page = p.page(int(page_number))
+        except:
+            page = p.page(1)
 
         # Add the following status
         is_following = False
@@ -59,7 +73,7 @@ def profile(request, username):
         
         return render(request, "network/profile.html", {
             "profile_user": profile_user,
-            "posts": posts,
+            "page": page,
             "is_following": is_following
         })
     
@@ -98,13 +112,22 @@ def follow(request):
 
 @login_required
 def following(request):    
+    page_number = request.GET.get('page', 1)
     following_users = request.user.following.all()
 
     # Performs a SQL equivalent of an IN function
     posts = Post.objects.filter(user__in=following_users).order_by('-created')
     
+    p = Paginator(posts,20)
+
+    # Convert the page number to integer or give default page 1
+    try:
+        page = p.page(int(page_number))
+    except:
+        page = p.page(1)
+
     return render(request, "network/following.html", {
-            "posts": posts,
+            "page": page,
             "following_users": following_users
     })
 
@@ -114,8 +137,6 @@ def edit_post(request):
         data = json.loads(request.body)
         post_id = data.get('post_id')
         new_content = data.get('content')
-        
-        # Ashley to vet the error checking more.
 
         # Prevents an empty post
         if not new_content or not new_content.strip():
@@ -135,6 +156,34 @@ def edit_post(request):
             return JsonResponse({
                 'success': True,
                 'content': post.content
+            })
+            
+        except Post.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Post not found'})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
+
+@login_required
+def like_post(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        post_id = data.get('post_id')
+        action = data.get('action')
+        
+        try:
+            post = Post.objects.get(id=post_id)
+            
+            if action == 'like':
+                post.like.add(request.user)
+                liked = True
+            else:
+                post.like.remove(request.user)
+                liked = False
+            
+            return JsonResponse({
+                'success': True,
+                'liked': liked,
+                'like_count': post.like_count()
             })
             
         except Post.DoesNotExist:
