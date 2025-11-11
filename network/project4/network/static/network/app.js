@@ -1,13 +1,28 @@
+function getCSRFToken() {
+    const tokenElement = document.getElementById('csrf-token');
+    if (tokenElement) {
+        return tokenElement.value;
+    }
+    
+    console.error('CSRF token not found');
+    return null;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const followBtn = document.getElementById('follow-btn');
-    const csrfToken = document.getElementById('csrf-token').value;
     
     if (followBtn) {
         followBtn.addEventListener('click', function() {
             const username = this.dataset.username;
 
             // This uses the text in the button that is clicked on
-            const isFollowing = this.textContent === 'Unfollow';
+            const isFollowing = this.textContent.trim() === 'Unfollow';
+
+            const csrfToken = getCSRFToken();
+            if (!csrfToken) {
+                    console.error('No CSRF token exists');
+                    return;
+                }
             
             fetch('/follow/', {
                 method: 'POST',
@@ -35,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         followBtn.classList.add('btn-primary');
                     }
                     
-                    updateFollowerCount(data.following);
+                    updateFollowerCount(data.follower_count);
                 }
             })
             .catch(error => {
@@ -45,16 +60,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-function updateFollowerCount(isNowFollowing, realCount) {
+function updateFollowerCount(realCount) {
     const followerCountElement = document.querySelector('#followers');
     
     if (followerCountElement) {
         const currentText = followerCountElement.textContent;
-        const currentCount = parseInt(currentText.match(/(\d+)/)[0]);
-        
-        const newCount = isNowFollowing ? currentCount + 1 : currentCount - 1;
-        
-        followerCountElement.textContent = currentText.replace(/\d+/, newCount);
+        followerCountElement.textContent = currentText.replace(/\d+/, realCount);
     }
 }
 
@@ -66,7 +77,7 @@ document.addEventListener('click', function(e) {
         const content = post.querySelector('p');
         const originalText = content.textContent;
         
-        // Replace paragraph with edit functions
+        // Replace paragraph with edit features
         content.innerHTML = `
             <textarea class="form-control" rows="3">${originalText}</textarea>
             <button class="btn btn-primary btn-sm mt-2 save-btn" data-post-id="${postId}">Save</button>
@@ -81,7 +92,11 @@ document.addEventListener('click', function(e) {
         const textarea = post.querySelector('textarea');
         const newContent = textarea.value;
 
-        const csrfToken = document.getElementById('csrf-token')?.value;
+        const csrfToken = getCSRFToken();
+           if (!csrfToken) {
+                console.error('No CSRF token');
+                return;
+            }
         
         fetch('/edit_post/', {
             method: 'POST',
@@ -112,7 +127,11 @@ document.addEventListener('click', function(e) {
         const likeCount = likeBtn.querySelector('.like-count');
         const isLiked = heart.textContent === '❤️';
         
-        const csrfToken = document.getElementById('csrf-token').value;
+        const csrfToken = getCSRFToken();
+           if (!csrfToken) {
+                console.error('No CSRF token');
+                return;
+            }
         
         fetch('/like_post/', {
             method: 'POST',

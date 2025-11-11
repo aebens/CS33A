@@ -29,7 +29,7 @@ class NewPostForm(forms.ModelForm):
 def index(request):
     page_number = request.GET.get('page', 1)
     posts = Post.objects.all()
-    p = Paginator(posts,20)
+    p = Paginator(posts,10)
 
     # Convert the page number to integer or give default page 1
     try:
@@ -58,7 +58,7 @@ def profile(request, username):
     try:
         profile_user = User.objects.get(username=username)
         posts = Post.objects.filter(user=profile_user)
-        p = Paginator(posts,20)
+        p = Paginator(posts,10)
 
         # Convert the page number to integer or give default page 1
         try:
@@ -118,7 +118,7 @@ def following(request):
     # Performs a SQL equivalent of an IN function
     posts = Post.objects.filter(user__in=following_users).order_by('-created')
     
-    p = Paginator(posts,20)
+    p = Paginator(posts,10)
 
     # Convert the page number to integer or give default page 1
     try:
@@ -145,7 +145,7 @@ def edit_post(request):
         try:
             post = Post.objects.get(id=post_id)
             
-            # Redundancy to ensure you can only edit your own post.
+            # Redundancy to ensure you can only edit your own post
             if post.user != request.user:
                 return JsonResponse({'success': False, 'error': 'Permission denied'})
             

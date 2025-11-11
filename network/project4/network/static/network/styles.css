@@ -21,3 +21,8 @@ body {
     border: 1px solid #ddd;
     border-radius: 5px;
 }
+
+.like-btn{
+    border: none; 
+    background: none;
+}

@@ -2,6 +2,7 @@
 
 {% block body %}
     <div class="container mt-4">
+        <input type="hidden" id="csrf-token" value="{{ csrf_token }}">
         
         <h1>Keeping Up With My Network</h1>
         
@@ -14,8 +15,7 @@
                     
                     {% if user.is_authenticated %}
                         <button class="btn btn-sm like-btn" 
-                                data-post-id="{{ post.id }}"
-                                style="border: none; background: none;">
+                                data-post-id="{{ post.id }}">
                             <span class="heart">{% if user in post.like.all %}❤️{% else %}🤍{% endif %}</span>
                             <span class="like-count">{{ post.like_count }}</span>
                         </button>
