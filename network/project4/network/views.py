@@ -3,12 +3,47 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django import forms
 
-from .models import User
+from .models import User, Post
 
+# class NewPost(forms.Form):
+#    PostContent = forms.CharField(widget=forms.Textarea, label="New Post", max_length=500, help_text="Maximum of 500 characters")
+
+class NewPostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea()
+        }
+        labels = {
+            'content': 'What\'s going on?'
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs["class"] = "form-control mb-3"
 
 def index(request):
-    return render(request, "network/index.html")
+    if request.method == "POST":
+        form = NewPostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.user = request.user
+            post.title = ""  # Set empty title or default value
+            post.save()
+            return HttpResponseRedirect(reverse("index"))
+    else:
+        form = NewPostForm()
+
+    posts = Post.objects.all()
+    
+    return render(request, "network/index.html", {
+        "newpostform": form,
+        "posts": posts
+    })
 
 
 def login_view(request):
