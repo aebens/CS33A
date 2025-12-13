@@ -1,0 +1,52 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+
+    <div class="container mt-4">
+        <input type="hidden" id="csrf-token" value="{{ csrf_token }}">
+
+        <h1>{{ profile_user.username }}</h1>
+        <h3 id="followers">{{ profile_user.follower_count }} follower{{ profile_user.follower_count|pluralize }} | following {{ profile_user.following_count }}</h3>
+      
+        {% if user.is_authenticated and user != profile_user %}
+            <button id="follow-btn" 
+                    data-username="{{ profile_user.username }}"
+                    class="btn {% if is_following %}btn-outline-primary{% else %}btn-primary{% endif %}">
+                {% if is_following %}Unfollow{% else %}Follow{% endif %}
+            </button>
+        {% endif %}
+
+        <div class="posts">
+            {% for post in page %}
+                <div class="post mb-3 p-3 border">
+                    <h5>{{ post.user.username }}</h5>
+                    <p>{{ post.content }}</p>
+                    <span class="username text-muted">{{ post.created }}</span>
+                    
+                    {% if user.is_authenticated %}
+                        <button class="btn btn-sm like-btn" 
+                                data-post-id="{{ post.id }}">
+                            <span class="heart">{% if user in post.like.all %}❤️{% else %}🤍{% endif %}</span>
+                            <span class="like-count">{{ post.like_count }}</span>
+                        </button>
+                    {% else %}
+                        <span class="likes ml-3">🤍 {{ post.like_count }}</span>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="pagination mt-3">
+            {% if page.has_previous %}
+                <a href="?page={{ page.previous_page_number }}">Previous</a>
+            {% endif %}
+
+            <span class="mx-3">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+            
+            {% if page.has_next %}
+                <a href="?page={{ page.next_page_number }}">Next</a>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

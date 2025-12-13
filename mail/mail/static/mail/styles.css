@@ -1,0 +1,62 @@
+textarea {
+    min-height: 400px;
+}
+
+.email {
+    display: flex;
+    gap: 1rem;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #000000;
+    box-sizing: border-box;
+    min-height: 56px;
+}
+
+.email > span {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.email > button {
+    flex: 0 0 auto;
+    margin-left: 0.5rem; 
+    align-self: center;
+}
+
+.email-timestamp {
+  flex: 0 0 200px;
+  font-size: 0.95rem;
+}
+
+.email-sender {
+  flex: 0 0 250px;
+  font-weight: 600;
+}
+
+.email-subject {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.read{
+    background-color: #f0f0f0;
+}
+
+.unread{
+    background-color: #fff;
+}
+
+/* hide views by default to prevent compose form from being exposed during refresh */
+#emails-view, #compose-view, #message-view {
+  display: none;
+}
+
+.message-firstline {
+  display: flex;
+  justify-content: space-between;
+}
+
+button.btn.btn-sm.btn-outline-secondary {
+    margin: .25rem .25rem .5rem;
+}

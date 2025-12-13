@@ -1,0 +1,259 @@
+body {
+    padding: 10px;
+}
+
+/* Listing cards -- some help provided by CS50 Duck*/
+
+.listing-card {
+  width: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 1.5rem;
+  margin: 1rem auto;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+
+.listing-card img {
+  width: auto;
+  height: auto;
+  max-width: 300px;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  object-fit: cover;
+  display: block;
+}
+
+.listing-card .title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.listing-card .description {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.listing-card .price {
+  font-size: 1.1rem;
+  color: #1976d2;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+/* This applies to the listing page as well as the grid */
+
+.category {
+  display: inline-block;
+  padding: 0.3em 1em;
+  background: #e3e6f0;
+  color: #1976d2;
+  border-radius: 999px;
+  font-size: 0.95em;
+  font-weight: 500;
+  margin: 0.2em 0;
+  letter-spacing: 0.03em;
+}
+
+.error-message {
+  color: #d32f2f;
+  background: #fdecea;
+  border: 1px solid #f8bbbc;
+  padding: 0.75em 1em;
+  border-radius: 6px;
+  margin: 1em 0;
+  font-weight: bold;
+}
+
+/* This will place the cards in a grid, 5 wide on desktop, 2 wide on medium screens, and 1 wide on mobile */
+
+.listings-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+@media (max-width: 1400px) and (min-width: 1101px) {
+  .listings-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 1100px) and (min-width: 801px) {
+  .listings-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 800px) and (min-width: 501px) {
+  .listings-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .listings-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Listing Page */
+
+
+.spacer {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+
+.watchlist {
+  color: #fff;
+  background: #1976d2;
+  padding: 0.4em 1em;
+  border-radius: 999px;
+  font-weight: bold;
+  cursor: pointer; /* Makes it look like a button */
+  margin-left: 1em;
+  text-decoration: none;
+}
+
+.watchlist:hover {
+  background: #145ea8;
+  color: #fff;
+}
+
+.close-listing {
+  color: #fff;
+  background: #d32f2f;
+  padding: 0.4em 1em;
+  border-radius: 999px;
+  font-weight: bold;
+  cursor: pointer;  /* Makes it look like a button */
+  margin-left: 1em;
+  text-decoration: none;
+}
+
+.close-listing:hover {
+  background: #a82323;
+  color: #fff;
+}
+
+.winner-label {
+  display: block;
+  width: 100%;
+  background: #e3e6f0;
+  color: #1976d2;
+  padding: 1em 0.5em;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-top: 1em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  letter-spacing: 0.03em;
+  text-align: center;
+}
+
+/* Listing Page Styles */
+
+.listing-page-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.listing-details {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 2rem;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.details-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.listing-bids {
+  background: #f7f9fc;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  padding: 2rem;
+}
+
+.bid-history {
+  list-style: none;
+  padding: 0;
+
+}
+
+.bid-history li {
+  padding: 0.5em 0;
+  border-bottom: 1px solid #e3e6f0;
+  font-size: 1em;
+}
+
+/* Comments */
+
+.comments-section {
+  margin-top: 2em;
+  padding: 1.5em;
+  background: #f7f9fc; /* sets off the section at the bottom of the page */
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.comment-list {
+  list-style: none; /* removes the bullet */
+  padding: 0;
+}
+
+.comment-list li {
+  margin-bottom: 1em;
+  border-bottom: 1px solid #e3e6f0; /* places a nice border between comments */
+  padding-bottom: 0.5em;
+}
+
+.comments-section textarea {
+  width: 100%;
+  max-width: 600px;
+  min-width: 300px;
+  height: 3em;
+  min-height: 2em;
+  font-size: 1em;
+  padding: 0.75em;
+  border-radius: 6px;
+  border: 1px solid #e3e6f0;
+  resize: vertical;
+  box-sizing: border-box;
+  margin-bottom: 1em;
+}
+
+.comments-section label {
+  display: block; /* places the label above the text area instead of inline */
+  margin-bottom: 0.3em;
+  vertical-align: top; /* places the label above the text area */
+  font-weight: 500;
+}
