@@ -1,9 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-
-function App() {
-  return <h1>React is installed now!</h1>;
-}
+import App from './App';
 
 const container = document.getElementById('root');
 if (container) {
