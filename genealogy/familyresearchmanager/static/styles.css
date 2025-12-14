@@ -150,6 +150,55 @@ h2 {
   border-color: var(--primary-color);
 }
 
+/* Select dropdown styling */
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+  background-color: var(--input-background);
+  color: var(--text-dark);
+}
+
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* Textarea styling */
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+  background-color: var(--input-background);
+  color: var(--text-dark);
+  min-height: 100px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* Button spacing */
+.family-form button {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.family-form button + button {
+  margin-left: 0.5rem;
+}
+
 button {
   background-color: var(--primary-color);
   color: white;
@@ -166,6 +215,32 @@ button {
 button:hover {
   background-color: var(--primary-hover);
 }
+
+/* Button row for side-by-side buttons */
+.button-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.button-row button {
+  width: auto;
+  padding: 0.5rem 1.5rem;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  margin-left: 1rem;
+  width: auto;
+}
+
+.delete-btn:hover {
+  background-color: #c82333;
+}
+
+/* Family List */
 
 .family-list {
   background-color: var(--background-light);

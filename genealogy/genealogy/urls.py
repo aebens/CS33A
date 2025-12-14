@@ -15,10 +15,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include, re_path
 from familyresearchmanager import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
+    path('api/', include('familyresearchmanager.urls')),
+    # This will catch all the routes on a refresh and move them to the index view.
+    re_path(r'^.*$', views.index, name='index'),
 ]
