@@ -21,7 +21,7 @@ In some cases, a source like a census could be cited thousands of time and thus 
 Family Research Manager addresses these gaps by implementing a citation system designed around modern genealogical best practices in combination with modern database design methodologies.
 
 
-## Features
+## Features and Design Choices
 
 ### People & Events
 - Add individuals to your family tree with given and last names
@@ -56,6 +56,14 @@ Unlike today's genealogical software, the user is not required to search in a sp
 
 ### Why Separate Research Log from Sources?
 The Research Log (SourceAccess model) tracks *when* a user accessed a source and *what* was found. This is distinct from the source itself. The research log captures this research process.
+
+## Tech Stack and Code Design
+
+Django and React are the primary technologies used for this application, as well as Webpack (inc. Babel).
+
+Because the database is the most important part of the software, it was important to get the Django models to work correctly and to implement as many Django and React features that would make this process as easy as possible, including the ModelViewSet to help accomplish CRUD.  Media also needed to be implemented and so media files were enabled in the settings.  Some issues occurred when trying to work with files, and work with the Duck helped implement signals and receivers.  This should make it easier to delete media files as needed.  The use of the Django API made it very efficient to fetch and post information.  There was an issue with posting updates to files, and it was discovered that using "PATCH" helped prevent data loss.
+
+When possible, features were replicated (e.g., the style of forms, the search feature) to make it easier to create the code needed for an application of this complexity.  Tabs were created in the source page to help suggest a workflow from left to right.  Major pages were given dedicated routes as were individual people to make it more user friendly to the user.
 
 ## Usage Workflow
 
