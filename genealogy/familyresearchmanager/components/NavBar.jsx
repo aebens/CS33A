@@ -12,7 +12,6 @@ function NavBar() {
         <li><Link to="/people">People</Link></li>
         <li><Link to="/sources">Sources</Link></li>
         <li><Link to="/reports">Reports</Link></li>
-        <li><Link to="/settings/types">Settings</Link></li>
       </ul>
     </nav>
   );

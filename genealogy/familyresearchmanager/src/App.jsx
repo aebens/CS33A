@@ -1,35 +1,12 @@
 import React, { useState } from 'react'
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import NavBar from '../components/NavBar.jsx'
 import { PeopleList, PersonProfile } from '../components/PersonProfile.jsx'
+import Sources from '../components/Sources.jsx'
+import Reports from '../components/Reports.jsx'
+import CitationForm from '../components/CitationForm.jsx'
 
 function App() {
-
-  // State to store the list of family members
- // const [people, setPeople] = useState([]);
-
-  // Global historical events state
- // const [historicalEvents, setHistoricalEvents] = useState([]);
-
-  // Event and attribute types
- // const [eventTypes, setEventTypes] = useState(defaultEventTypes);
-  //const [attributeTypes, setAttributeTypes] = useState(defaultAttributeTypes);
-
-  // Source hierarchy state (normalized)
-  // Repositories: where records are officially held or accessed from
-  //const [repositories, setRepositories] = useState(defaultRepositories);
-
-  // Collections: groups of records (e.g., "1940 US Federal Census")
-  // { id, title, creator, repositoryId (official), recordType (template key), notes }
-  //const [collections, setCollections] = useState([]);
-
-  // Source Items: specific documents/images within a collection
-  // { id, collectionId, accessRepositoryId (where accessed), metadata: {}, attachments: [], notes }
-  //const [sourceItems, setSourceItems] = useState([]);
-
-  // Legacy sources state (for backwards compatibility during migration)
-  //const [sources, setSources] = useState([]);
-
 
   return (
     <BrowserRouter>
@@ -38,6 +15,9 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/people" element={<PeopleList />} />
         <Route path="/people/:id" element={<PersonProfile />} />
+        <Route path="/sources" element={<Sources />} />
+        <Route path="/reports" element={<Reports />} />
+        <Route path="/citations/new" element={<CitationForm />} />
       </Routes>
     </BrowserRouter>
   )

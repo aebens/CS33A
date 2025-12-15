@@ -95,7 +95,6 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-
 .app {
   max-width: 80%;
   margin: 0 auto;
@@ -232,12 +231,68 @@ button:hover {
   background-color: #dc3545;
   padding: 0.25rem 0.75rem;
   font-size: 0.875rem;
-  margin-left: 1rem;
+  margin-left: .25rem;
   width: auto;
 }
 
 .delete-btn:hover {
   background-color: #c82333;
+}
+
+.edit-btn {
+  background-color: #3fa573;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  margin-left: auto;
+  width: auto;
+}
+
+.edit-btn:hover {
+  background-color: #2d8659;
+}
+
+.cite-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.cite-btn:hover {
+    background: #218838;
+}
+
+/* Source Navigation Buttons */
+
+.source-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.source-tabs button {
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text-dark);
+  transition: all 0.2s;
+  width: auto;
+}
+
+.source-tabs button:hover {
+  background-color: var(--background-light);
+}
+
+.source-tabs button.active {
+  border-bottom-color: var(--primary-color);
+  color: var(--primary-color);
 }
 
 /* Family List */
@@ -263,6 +318,9 @@ button:hover {
   border-left: 4px solid var(--primary-color);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .family-list li:hover {
@@ -274,4 +332,237 @@ button:hover {
   font-style: italic;
   text-align: center;
   padding: 2rem;
+}
+
+/* File Preview Styles */
+.file-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.file-thumbnail {
+  width: 50px;
+  height: 50px;
+  max-width: 50px;
+  max-height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* Reports Component Styles */
+.reports-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.source-report {
+    background: white;
+    padding: 30px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: 'Times New Roman', serif;
+    line-height: 1.6;
+}
+
+.report-subtitle {
+    font-style: italic;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.collection-section {
+    margin-bottom: 30px;
+}
+
+.collection-header {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ccc;
+}
+
+.sources-list {
+    margin-left: 0;
+    padding-left: 20px;
+}
+
+.source-item {
+    margin-bottom: 15px;
+}
+
+.citation-text {
+    margin-bottom: 5px;
+}
+
+.source-notes {
+    margin-left: 20px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.research-log-info {
+    margin-left: 20px;
+    font-size: 0.9em;
+    color: #555;
+    margin-top: 10px;
+}
+
+.research-entry {
+    margin-bottom: 8px;
+    padding: 5px;
+    background: #f9f9f9;
+    border-left: 3px solid #007bff;
+}
+
+.citation-toggle {
+    background: #e8f5e9;
+    border: 1px solid #a5d6a7;
+    border-radius: 12px;
+    color: #2e7d32;
+    cursor: pointer;
+    font-size: 0.8em;
+    padding: 2px 10px;
+    margin-left: 8px;
+}
+
+.citation-toggle:hover {
+    background: #c8e6c9;
+}
+
+.citations-expanded {
+    margin: 10px 0 10px 20px;
+    padding: 10px;
+    border-left: 2px solid #ddd;
+}
+
+.citation-detail {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.citation-delete {
+    font-size: 0.8em;
+    padding: 2px 8px;
+    margin-top: 5px;
+}
+
+/* Mobile Responsive Styles */
+
+@media screen and (max-width: 768px) {
+  /* Navbar stacks vertically on mobile */
+  .navbar {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .navbar-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  /* App container uses more screen width */
+  .app {
+    max-width: 95%;
+    padding: 1rem;
+  }
+
+  /* Smaller heading on mobile */
+  h1 {
+    font-size: 2rem;
+  }
+
+  /* Form adjustments */
+  .family-form {
+    padding: 1rem;
+  }
+
+  /* Button row stacks vertically */
+  .button-row {
+    flex-direction: column;
+  }
+
+  .button-row button {
+    width: 100%;
+  }
+
+  /* Source tabs scroll horizontally */
+  .source-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .source-tabs button {
+    padding: 0.5rem 1rem;
+    white-space: nowrap;
+    font-size: 0.9rem;
+  }
+
+  /* List items stack content */
+  .family-list li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .family-list li .edit-btn,
+  .family-list li .delete-btn {
+    margin-left: 0;
+  }
+
+  /* File preview */
+  .file-preview {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+
+  /* Reports container */
+  .reports-container {
+    padding: 10px;
+  }
+
+  .source-report {
+    padding: 15px;
+  }
+}
+
+/* Extra small screens */
+@media screen and (max-width: 480px) {
+  .navbar-brand h2 {
+    font-size: 1.2rem;
+  }
+
+  .navbar-links {
+    gap: 0.75rem;
+  }
+
+  .navbar-links a {
+    font-size: 0.9rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  button {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
 }
