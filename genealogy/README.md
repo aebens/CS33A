@@ -2,6 +2,8 @@
 
 Family Research Manager is a genealogical application to track data about people and the events in their lives.  It focuses on alleviating data entry associated with source citations -- a task that is difficult with current software.
 
+Youtube walkthrough:  https://youtu.be/i2XJDiVjLO0
+
 ## Genealogy Software - A Problem Statement:
 The current state of genealogy software suffers from two major problems:
 
